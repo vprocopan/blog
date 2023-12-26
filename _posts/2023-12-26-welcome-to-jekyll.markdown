@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Welcome to Jekyll!"
+title:  "Welcome to Vitalie Procopan's TIL"
 date:   2023-12-26 12:29:33 +0200
 categories: jekyll update
 ---
