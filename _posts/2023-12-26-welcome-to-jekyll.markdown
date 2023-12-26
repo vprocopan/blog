@@ -4,6 +4,9 @@ title:  "Welcome to Vitalie Procopan's TIL"
 date:   2023-12-26 12:29:33 +0200
 categories: jekyll update
 ---
+===
+Vitalie Procopan is a DevOps Engineer
+===
 You’ll find this post in your `_posts` directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run `jekyll serve`, which launches a web server and auto-regenerates your site when a file is updated.
 
 Jekyll requires blog post files to be named according to the following format:
