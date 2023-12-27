@@ -4,8 +4,8 @@ title: About
 permalink: /about/
 ---
 
-Vitalie Procopan is a DevOps Engineer
-======================================
+I am a DevOps Engineer with 10 years of experience
+==================================================
 
 Check out my github profile [LinkedIn][linkedin]
 
