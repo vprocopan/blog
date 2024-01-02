@@ -5,7 +5,10 @@ title:  "Welcome to my blog, here are some tips and tricks"
 
 # Welcome
 
-**Hello world**,  <a href=https://github.com/Microsoft/vscode-tips-and-tricks> "VS Code tips and tricks"</a>
+**Hello world**, [https://github.com/Microsoft/vscode-tips-and-tricks][def]
 
 I hope you like it!
 
+
+
+[def]: https://github.com/Microsoft/vscode-tips-and-tricks
