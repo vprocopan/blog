@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-I am a DevOps Engineer with 10 years of experience
+I am a DevOps Engineer with 12 years of experience
 ==================================================
 
 Check out my LinkedIn profile [LinkedIn][linkedin]
