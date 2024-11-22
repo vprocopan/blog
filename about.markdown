@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-I am a DevOps Engineer with 12 years of experience, currently employed in Chisinau, Moldova
+I am a DevOps Engineer (3 years officially) with 12 years of experience in IT, currently employed in Chisinau, Moldova
 
 ---
 
