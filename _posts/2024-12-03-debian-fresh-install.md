@@ -56,7 +56,7 @@ sudo apt install -y ssh openssh-server nmap traceroute tmux
 
 • **Node.js and NPM**:
 
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+```curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -```
 
 sudo apt install -y nodejs
 
@@ -168,7 +168,7 @@ sudo mkswap /swapfile
 
 sudo swapon /swapfile
 
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab```
 
 **Final Steps:**
 
