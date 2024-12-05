@@ -9,36 +9,35 @@ To run a Control Panel tool in Windows, type the appropriate command in the Open
 NOTE: If you want to run a command from a command prompt, you must do so from the Windows folder. Also, note that your computer may not have all of the tools listed in this article, as your Windows installation may not include all of these components.
 
 Control panel tool Command
------------------------------------------------------------------
-Accessibility Options control access.cpl
-Add New Hardware control sysdm.cpl add new hardware
-Add/Remove Programs control appwiz.cpl
-Date/Time Properties control timedate.cpl
-Display Properties control desk.cpl
-FindFast control findfast.cpl
-Fonts Folder control fonts
-Internet Properties control inetcpl.cpl
-Joystick Properties control joy.cpl
-Keyboard Properties control main.cpl keyboard
-Microsoft Exchange control mlcfg32.cpl
-(or Windows Messaging)
-Microsoft Mail Post Office control wgpocpl.cpl
-Modem Properties control modem.cpl
-Mouse Properties control main.cpl
-Multimedia Properties control mmsys.cpl
-Network Properties control netcpl.cpl
-NOTE: In Windows NT 4.0, Network
-properties is Ncpa.cpl, not Netcpl.cpl
-Password Properties control password.cpl
-PC Card control main.cpl pc card (PCMCIA)
-Power Management (Windows 95) control main.cpl power
-Power Management (Windows 98) control powercfg.cpl
-Printers Folder control printers
-Regional Settings control intl.cpl
-Scanners and Cameras control sticpl.cpl
-Sound Properties control mmsys.cpl sounds
+
+Accessibility Options control access.cpl  
+Add New Hardware control sysdm.cpl add new hardware  
+Add/Remove Programs control appwiz.cpl  
+Date/Time Properties control timedate.cpl  
+Display Properties control desk.cpl  
+FindFast control findfast.cpl  
+Fonts Folder control fonts  
+Internet Properties control inetcpl.cpl  
+Joystick Properties control joy.cpl  
+Keyboard Properties control main.cpl keyboard  
+Microsoft Exchange control mlcfg32.cpl  
+(or Windows Messaging)  
+Microsoft Mail Post Office control wgpocpl.cpl  
+Modem Properties control modem.cpl  
+Mouse Properties control main.cpl  
+Multimedia Properties control mmsys.cpl  
+Network Properties control netcpl.cpl  
+NOTE: In Windows NT 4.0, Network  
+properties is Ncpa.cpl, not Netcpl.cpl  
+Password Properties control password.cpl  
+PC Card control main.cpl pc card (PCMCIA)  
+Power Management (Windows 95) control main.cpl power  
+Power Management (Windows 98) control powercfg.cpl  
+Printers Folder control printers  
+Regional Settings control intl.cpl  
+Scanners and Cameras control sticpl.cpl  
+Sound Properties control mmsys.cpl sounds  
 System Properties control sysdm.cpl
-NOTE: The Scanners and Cameras applet (sticpl.cpl) cannot be run in Windows Millennium. It has been replaced by the Scanners and Cameras Folder, which is similar in function to folders like Printers and Dial-up Networking.
 
 
 Windows substitutes the name of the tool you want to run for %1%. For example:
