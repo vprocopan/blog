@@ -4,4 +4,4 @@
 
 layout: home
 ---
-![Vitalie Procopan](https://avatars.githubusercontent.com/u/6999055?s=400&v=4 "Vitalie Procopan")
+
