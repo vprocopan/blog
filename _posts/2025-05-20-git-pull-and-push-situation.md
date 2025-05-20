@@ -91,4 +91,105 @@ git fetch
 git rebase origin/your-branch
 ```
 
-Let me know your goal (e.g. clean history, automation, resolving conflicts) and I can suggest the best flow.
+
+Great — let’s walk through a **visual example** of `git rebase origin/main` with **real commands** step-by-step.
+
+---
+
+### 🧪 Scenario:
+
+You and your teammate are both working on the `main` branch.
+
+* Your teammate made a commit and pushed it.
+* Meanwhile, you made a local commit.
+* Now, the branches look like this:
+
+```
+Remote (origin/main):     A --- B --- C
+Your local (main):        A --- B --- D
+```
+
+So your local `main` has diverged from `origin/main`.
+
+---
+
+### 🎯 Goal:
+
+Bring your local commit (`D`) **on top of** `origin/main` (`A-B-C`) — using `git rebase`.
+
+---
+
+### 💻 Step-by-step commands:
+
+#### 🔁 1. Fetch the latest from remote
+
+```bash
+git fetch origin
+```
+
+Now Git knows about `origin/main` and its state (including commit `C`).
+
+---
+
+#### 🔎 2. Check the difference (optional but recommended)
+
+```bash
+git log --oneline --graph --all
+```
+
+You’ll see something like:
+
+```
+* d34db33 (HEAD -> main) D: Your local commit
+| * c0ffee (origin/main) C: Teammate's commit
+|/
+* bbbbbbb B: shared base
+* aaaaaaa A: initial commit
+```
+
+---
+
+#### 🔁 3. Rebase your work onto the latest origin/main
+
+```bash
+git rebase origin/main
+```
+
+This means:
+
+> “Take my commit D, and apply it on top of origin/main (which ends at C).”
+
+If no conflicts, you'll get:
+
+```
+A --- B --- C --- D′
+```
+
+Now your local branch is linear and up-to-date.
+
+---
+
+#### 🚀 4. Push your changes
+
+```bash
+git push --force-with-lease
+```
+
+Since you rewrote history (D → D′), a normal `git push` would be rejected.
+`--force-with-lease` safely updates the branch only if the remote hasn’t changed since your fetch.
+
+---
+
+### 🧠 Summary:
+
+| Step | Command                           | Purpose                              |
+| ---- | --------------------------------- | ------------------------------------ |
+| 1    | `git fetch origin`                | Download latest changes              |
+| 2    | `git log --oneline --graph --all` | Visualize history                    |
+| 3    | `git rebase origin/main`          | Replay your commits on top of remote |
+| 4    | `git push --force-with-lease`     | Push updated history                 |
+
+---
+
+
+![pull-push-sametime](/assets/images/pull-push.png)
