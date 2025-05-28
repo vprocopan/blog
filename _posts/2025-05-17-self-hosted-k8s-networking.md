@@ -357,3 +357,4 @@ You should see logs showing certificate acquisition like:
 ```
 
 ---
+![local-k8s-network](/assets/images/local-k8s-network.png)
