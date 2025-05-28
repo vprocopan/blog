@@ -193,3 +193,80 @@ Since you rewrote history (D → D′), a normal `git push` would be rejected.
 
 
 ![pull-push-sametime](/assets/images/pull-push.png)
+
+
+```
+hint:   git config pull.rebase false  # merge
+hint:   git config pull.rebase true   # rebase
+hint:   git config pull.ff only       # fast-forward only
+```
+
+These git config hints refer to how Git should handle git pull, which combines git fetch (downloading new commits) and git merge (or rebase, depending on settings).
+
+⸻
+
+📌 The Problem:
+
+When you run git pull, Git needs to know how to integrate the remote changes into your current branch — especially if you’ve made local commits that are not on the remote.
+
+⸻
+
+🔧 Options Explained:
+
+1. git config pull.rebase false
+	•	Default behavior: merge.
+	•	Git will do:
+
+git fetch
+git merge origin/your-branch
+
+
+	•	This creates a merge commit if your local branch and remote branch have diverged.
+	•	✅ Easy, keeps full history.
+	•	❌ History may get messy due to merge commits.
+
+⸻
+
+2. git config pull.rebase true
+	•	Git will do:
+
+git fetch
+git rebase origin/your-branch
+
+
+	•	Your local commits are rebased on top of the latest remote commits.
+	•	✅ Cleaner, linear history (looks like you wrote all changes after pulling).
+	•	❌ Can be confusing if you’re not used to rebasing; requires careful conflict resolution.
+
+⸻
+
+3. git config pull.ff only
+	•	Git will do:
+
+git fetch
+git merge --ff-only origin/your-branch
+
+
+	•	This means: only fast-forward the branch if possible (i.e., if there are no local commits).
+	•	✅ Prevents merge commits and history rewriting.
+	•	❌ Fails if your local branch has diverged — you must resolve manually.
+
+⸻
+
+🔧 Set Globally or Per-Repo
+
+Set globally for all repos:
+
+git config --global pull.rebase true  # or false or ff only
+
+Set per-repo:
+
+git config pull.rebase true
+
+
+⸻
+
+✅ Which One Should You Use?
+	•	Use rebase if you like linear, tidy history (typical in modern teams).
+	•	Use merge if you value recording all merge points.
+	•	Use ff only if you’re strict and always want a clean fast-forward only (common in protected branches).
