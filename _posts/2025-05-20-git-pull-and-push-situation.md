@@ -1,5 +1,9 @@
 What if you have to pull and push at the same time?
-You can use below:
+
+The safest approach is to do **below:**
+
+
+
 
 ```bash
 git fetch
@@ -91,8 +95,13 @@ git fetch
 git rebase origin/your-branch
 ```
 
+ 
 
-Great — let’s walk through a **visual example** of `git rebase origin/main` with **real commands** step-by-step.
+
+Another approach is to do **below:**
+
+
+Let’s walk through a **visual example** of `git rebase origin/main` with **real commands** step-by-step.
 
 ---
 
