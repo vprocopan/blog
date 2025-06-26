@@ -86,7 +86,10 @@ Where **M** is a new commit combining both histories.
 
 ---
 
-## 🧠 Tip
+
+
+## Another approach is to do **below:**
+
 
 If you want to avoid merge commits and keep history linear:
 
@@ -97,8 +100,6 @@ git rebase origin/your-branch
 
  
 
-
-Another approach is to do **below:**
 
 
 Let’s walk through a **visual example** of `git rebase origin/main` with **real commands** step-by-step.
