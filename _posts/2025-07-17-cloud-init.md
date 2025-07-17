@@ -141,7 +141,9 @@ It is ideal for creating **dynamic VMs with unique settings**, such as IP addres
 
 ---
 
+
 Here’s a **step-by-step guide** to create a **cloud-init enabled Ubuntu 22.04 template on Proxmox**, which you can use to clone VMs with unique config (IP, hostname, SSH keys, etc.):
+
 
 ---
 
