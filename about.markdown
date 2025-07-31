@@ -7,6 +7,11 @@ permalink: /about/
 
 I am a DevOps Engineer (4 years officially) with 13 years of experience in IT, currently employed in Chisinau, Moldova
 
+**Tech Stack**
+
+Jenkins, ArgoCD, Vault, Proxmox, Temporal, Centrifugo, Kubernetes, Docker, Prometheus / Grafana, Kafka, Redis
+
+
 ---
 
 Check out my LinkedIn profile [LinkedIn][linkedin]
