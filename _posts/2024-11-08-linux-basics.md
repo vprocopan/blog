@@ -1,166 +1,237 @@
-**BASIC LINUX COMMANDS**
+# Basic Linux Commands
 
-**FILES & NAVIGATING**
+## Files & Navigating
 
-• ls – directory listing (list all files/folders on current dir)
+- `ls`  
+  List files and folders in the current directory
 
-• ls -l – formatted listing
+- `ls -l`  
+  Long format listing with permissions, owner, size, and timestamp
 
-• ls -la – formatted listing including hidden files
+- `ls -la`  
+  Long format listing including hidden (`.`) files
 
-• cd dir – change directory to dir (dir will be directory name)
+- `cd <dir>`  
+  Change directory to `<dir>`
 
-• cd .. – change to parent directory
+- `cd ..`  
+  Move to parent directory
 
-• cd ./dir – change to dir in parent directory
+- `cd ./<dir>`  
+  Change to `<dir>` in the current directory
 
-• cd ~ – change to home directory
+- `cd ~`  
+  Change to your home directory
 
-• pwd – show current directory
+- `pwd`  
+  Print the current working directory
 
-• mkdir dir – create a directory dir
+- `mkdir <dir>`  
+  Create a new directory named `<dir>`
 
-• rm file – delete file
+- `rm <file>`  
+  Remove the file `<file>`
 
-• rm -f dir – force remove file
+- `rm -f <file>`  
+  Force remove `<file>` without prompt
 
-• rm -rf dir – delete directory dir
+- `rm -rf <dir>`  
+  Recursively remove `<dir>` and its contents
 
-• rmdir dir – remove directory dir
+- `rmdir <dir>`  
+  Remove empty directory `<dir>`
 
-• rm -rf / – launch some nuclear bombs targeting your system
+- `rm -rf /`  
+  WARNING: Deletes everything on the system root (never run this)
 
-• cp file1 file2 – copy file1 to file2
+- `cp <source> <destination>`  
+  Copy `<source>` file to `<destination>`
 
-• mv file1 file2 – rename file1 to file2
+- `mv <source> <destination>`  
+  Move or rename `<source>` to `<destination>`
 
-• mv file dir/file2 – move file to dir as file2
+- `mv <file> <dir>/<new-name>`  
+  Move `<file>` into `<dir>` with new name `<new-name>`
 
-• touch file – create or update file
+- `touch <file>`  
+  Create an empty file or update its timestamp
 
-• cat file – output contents of file
+- `cat <file>`  
+  Display contents of `<file>`
 
-• cat > file – write standard input into file
+- `cat > <file>`  
+  Redirect input into `<file>`, overwriting it
 
-• cat >> file – append standard input into file
+- `cat >> <file>`  
+  Redirect input into `<file>`, appending to it
 
-• tail -f file – output contents of file as it grows
+- `tail -f <file>`  
+  Follow the end of `<file>` as it is updated
 
-**SYSTEM INFO**
+## System Information
 
-• date – show current date/time
+- `date`  
+  Display the current date and time
 
-• uptime – show uptime
+- `uptime`  
+  Show how long the system has been running
 
-• whoami – who you’re logged in as
+- `whoami`  
+  Print the effective username of the current user
 
-• w – display who is online
+- `w`  
+  Show who is logged in and their processes
 
-• cat /proc/cpuinfo – display CPU info
+- `cat /proc/cpuinfo`  
+  Display detailed CPU information
 
-• cat /proc/meminfo – memory info
+- `cat /proc/meminfo`  
+  Display memory usage information
 
-• free – show memory and swap usage
+- `free -h`  
+  Display memory and swap usage in human-readable format
 
-• du – show directory space usage
+- `du`  
+  Estimate file and directory space usage
 
-• du -sh – displays readable sizes in GB
+- `du -sh`  
+  Summarize disk usage in human-readable format
 
 • df – show disk usage
 
 • uname -a – show kernel config
 
-**NETWORKING**
+## Networking
 
-• ping host – ping host
+- `ping <host>`  
+  Send ICMP ECHO_REQUEST to network hosts
 
-• whois domain – get whois for domain
+- `whois <domain>`  
+  Query the WHOIS database for `<domain>`
 
-• dig domain – get DNS for domain
+- `dig <domain>`  
+  DNS lookup for `<domain>`
 
-• dig -x host – reserve lookup host
+- `dig -x <ip>`  
+  Reverse DNS lookup for `<ip>`
 
-• wget file – download file
+- `wget <url>`  
+  Download files from the web
 
-• wget -c file – continue stopped download
+- `wget -c <url>`  
+  Continue a partially downloaded file
 
-• wget -r url – recursively download files from URL
+- `wget -r <url>`  
+  Recursively download content from `<url>`
 
-• curl url – outputs the webpage from URL
+- `curl <url>`  
+  Transfer data from `<url>` and display it
 
-• curl -o meh.html url – writes the page to meh.html
+- `curl -o <file> <url>`  
+  Save output from `<url>` to `<file>`
 
-• ssh user@host – connect to host as user
+- `ssh <user>@<host>`  
+  Open SSH connection to `<host>` as `<user>`
 
-• ssh -p port user@host – connect using port
+- `ssh -p <port> <user>@<host>`  
+  Specify `<port>` for SSH connection
 
-• ssh -D user@host – connect & use bind port
+- `ssh -D <port> <user>@<host>`  
+  Create a SOCKS proxy at local `<port>`
 
-**COMPRESSING**
+## Compressing Archives
 
-• tar cf file.tar files – tar files into file.tar
+- `tar cf <archive>.tar <files>`  
+  Create `<archive>.tar` from `<files>`
 
-• tar xf file.tar – untar into current directory
+- `tar xf <archive>.tar`  
+  Extract `<archive>.tar` in current directory
 
-• tar tf file.tar – show contents of archive
+- `tar tf <archive>.tar`  
+  List contents of `<archive>.tar`
 
-**options**:
+### Common `tar` Options
 
-• c – create archive
+- `c`  
+  Create a new archive
 
-• t – table of contents
+- `t`  
+  List the archive contents
 
-• x – extract
+- `x`  
+  Extract files from archive
 
-• z – use zip/gzip
+- `z`  
+  Filter archive through gzip
 
-• f – specify filename
+- `f`  
+  Use archive file
 
-• j – bzip2 compression
+- `j`  
+  Filter archive through bzip2
 
-• v – verbose
+- `v`  
+  Verbosely list files processed
 
-• w – ask for confirmation
+- `w`  
+  Prompt before each file
 
-• k – do not overwrite
+- `k`  
+  Keep existing files on extract
 
-• T – files from file
+- `T`  
+  Get list of files from `<file>`
 
-**PERMISSIONS**
+## File Permissions
 
-• chmod octal file – change permissions of file
+- `chmod <mode> <file>`  
+  Change file permissions to `<mode>`
 
-• 4 – read (r)
+- `4`  
+  Read permission
 
-• 2 – write (w)
+- `2`  
+  Write permission
 
-• 1 – execute (x)
+- `1`  
+  Execute permission
 
-• **order**: owner/group/world
+- Permissions order: owner/group/others
 
-• chmod 777 – rwx for everyone
+- `chmod 777 <file>`  
+  Full permissions for all users
 
-• chmod 755 – rw for owner, rx for group world
+- `chmod 755 <file>`  
+  Owner can rwx, group/others can rx
 
-**PROCESSES**
+## Process Management
 
-• ps – display currently active processes
+- `ps`  
+  List current shell processes
 
-• ps aux – detailed outputs
+- `ps aux`  
+  Show all processes in detailed format
 
-• kill pid – kill process with process id (pid)
+- `kill <pid>`  
+  Send TERM signal to `<pid>`
 
-• killall proc – kill all processes named proc
+- `killall <process>`  
+  Kill all processes named `<process>`
 
-**SOME OTHERS**
+## Other Useful Commands
 
-• grep pattern file – search in files for pattern
+- `grep <pattern> <file>`  
+  Search for `<pattern>` in `<file>`
 
-• grep -r pattern dir – search for pattern recursively in dir
+- `grep -r <pattern> <dir>`  
+  Recursively search `<pattern>` in `<dir>`
 
-• locate file – find all instances of file
+- `locate <file>`  
+  Find all occurrences of `<file>` in database
 
-• whereis app – show possible locations of app
+- `whereis <app>`  
+  Locate binary, source, and manual page for `<app>`
 
-• man command – show manual page for command
+- `man <command>`  
+  Display the manual page for `<command>`
 
