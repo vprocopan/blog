@@ -1,5 +1,3 @@
----
-
 # YAML Maps vs Lists: A Quick Guide
 
 YAML uses two fundamental data structures: **maps** (key/value pairs) and **lists** (ordered sequences). Understanding the difference is essential for writing clear, structured configuration files.
