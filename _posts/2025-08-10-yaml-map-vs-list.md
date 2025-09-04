@@ -1,68 +1,93 @@
-In YAML, maps and lists are two fundamental data structures — basically key/value pairs vs ordered sequences.
+---
 
-⸻
+# YAML Maps vs Lists: A Quick Guide
 
-📌 1. Map = Key → Value pairs (like a dictionary in Python, object in JSON)
-	•	Keys are unique
-	•	Values can be strings, numbers, booleans, lists, or even other maps
-	•	Order usually doesn’t matter (though YAML preserves it, semantics treat it as unordered)
+YAML uses two fundamental data structures: **maps** (key/value pairs) and **lists** (ordered sequences). Understanding the difference is essential for writing clear, structured configuration files.
 
-Example:
+---
 
+## 📌 1. Maps (Key → Value Pairs)
+
+Maps are like a **dictionary in Python** or an **object in JSON**.
+
+* Keys must be **unique**.
+* Values can be **strings, numbers, booleans, lists, or other maps**.
+* Order is usually not important (YAML preserves order, but semantically it doesn’t matter).
+
+**Example (YAML):**
+
+```yaml
 person:
   name: Alice
   age: 30
   city: Paris
+```
 
-Equivalent in JSON:
+**Equivalent (JSON):**
 
+```json
 { "person": { "name": "Alice", "age": 30, "city": "Paris" } }
+```
 
+---
 
-⸻
+## 📌 2. Lists (Ordered Sequences)
 
-📌 2. List = Ordered sequence of items (like an array in JSON, list in Python)
-	•	Items are defined with a - dash
-	•	Order matters
-	•	Items can be strings, numbers, maps, or nested lists
+Lists are like a **list in Python** or an **array in JSON**.
 
-Example:
+* Defined using a leading `-` (dash).
+* **Order matters.**
+* Items can be strings, numbers, maps, or even other lists.
 
+**Example (YAML):**
+
+```yaml
 fruits:
   - apple
   - banana
   - cherry
+```
 
-Equivalent in JSON:
+**Equivalent (JSON):**
 
+```json
 { "fruits": ["apple", "banana", "cherry"] }
+```
 
+---
 
-⸻
+## 📌 3. Combining Maps and Lists
 
-📌 3. Combined Example
+YAML allows you to nest maps inside lists and vice versa.
 
-YAML lets you nest maps inside lists and vice versa:
+**Example (YAML):**
 
+```yaml
 users:
   - name: Alice
     role: admin
   - name: Bob
     role: user
+```
 
 Here:
-	•	users is a list
-	•	Each list item is a map with name and role keys
 
-⸻
+* `users` is a **list**.
+* Each list item is a **map** with `name` and `role` keys.
 
-✅ Quick Difference Table
+---
 
-Feature	Map	List
-Structure	Key → Value pairs	Ordered items
-Uniqueness	Keys must be unique	Items can repeat
-Order	Not semantically important	Important
-Access by	Key name	Index number
+## ✅ Quick Comparison
 
+| Feature    | Map (Key/Value)            | List (Ordered Items) |
+| ---------- | -------------------------- | -------------------- |
+| Structure  | Key → Value pairs          | Sequence of items    |
+| Uniqueness | Keys must be unique        | Items can repeat     |
+| Order      | Not semantically important | Order matters        |
+| Access by  | Key name                   | Index number         |
 
-⸻
+---
+
+👉 **In short:** Use maps when you need **labeled data** (like config options), and lists when you need an **ordered collection** (like a sequence of items).
+
+---
