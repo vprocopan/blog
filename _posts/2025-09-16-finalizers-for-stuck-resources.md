@@ -3,3 +3,10 @@
 ```
 kubectl get ns opentelemetry-kube-stack -o json | jq '.spec.finalizers=[]' | kubectl replace --raw "/api/v1/namespaces/opentelemetry-kube-stack/finalize" -f - 
 ```
+
+
+
+## If argocd application gets stuck
+
+kubectl -n argocd patch application opentelemetry-kube-stack \
+  -p '{"metadata":{"finalizers":[]}}' --type=merge
