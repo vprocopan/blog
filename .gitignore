@@ -1,0 +1,22 @@
+# JetBrains / PhpStorm project files
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# Entire IDE project directory (recommended)
+.idea/
+
+# Module files
+*.iml
+
+# User-specific IDE files (if .idea/ is partially checked in)
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+.idea/**/httpRequests/
+.idea/**/dataSources/
+.idea/**/dataSources.local.xml
+
+# Optional: AWS, SSH configs created by IDE
+.idea/**/aws.xml
+.idea/**/sshConfigs.xml
