@@ -9,7 +9,7 @@ I am a DevOps Engineer (5 years officially) with 14 years of experience in IT, c
 
 **Tech Stack**
 
-Jenkins, ArgoCD, Vault, Proxmox, Temporal, Centrifugo, Kubernetes, Docker, Prometheus / Grafana, Kafka, Redis
+Jenkins, ArgoCD, Vault, Proxmox, Temporal, Centrifugo, Kubernetes, Docker, Prometheus / Grafana, Kafka, Redis, Jaeger.
 
 
 ---
