@@ -5,6 +5,4 @@
 layout: home
 ---
 
-**Test**
-
-**Test2**
+Below are posts that i find interesting about the Job, or Hints, or something hard to remember :)
