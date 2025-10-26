@@ -21,7 +21,7 @@ ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml -b
 
 ## Guide to installing k8s doc with AI generated elaborate summary
 
-Here’s your guide rewritten as a **complete, well-structured, and informative step-by-step tutorial** for deploying an **on-premises Kubernetes cluster using Kubespray on Proxmox** VMs running **Ubuntu 24.04 LTS**.
+Here’s a guide rewritten as a **complete, well-structured, and informative step-by-step tutorial** for deploying an **on-premises Kubernetes cluster using Kubespray on Proxmox** VMs running **Ubuntu 24.04 LTS**.
 
 ---
 
@@ -214,6 +214,3 @@ kubectl get nodes
 | **Ubuntu 24.04** | Lightweight, LTS base OS |
 
 ---
-
-Would you like me to include a **minimal working inventory.ini** (ready to paste and run with your 3 nodes + bastion example)?  
-I can also add **CNI choice (Calico/Flannel)** and **post-install verification commands** if you want to extend it into a full deployment manual.
