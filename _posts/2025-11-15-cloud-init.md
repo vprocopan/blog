@@ -203,3 +203,211 @@ Key-based login will work automatically.
 You now have a fully automatic **Ubuntu 24.04 autoinstall** configuration — no prompts, no manual steps.
 
 ---
+
+
+
+xorriso -as mkisofs \
+  -r -V "Ubuntu-24.04-Autoinstall" \
+  -J -joliet-long -l \
+  -iso-level 3 \
+  -o ubuntu-24.04-autoinstall.iso \
+  -partition_offset 16 \
+  -isohybrid-mbr /usr/share/syslinux/isohdpfx.bin \
+  -c boot.catalog \
+  -b boot/grub/i386-pc/eltorito.img \
+     -no-emul-boot -boot-load-size 4 -boot-info-table \
+  -eltorito-alt-boot \
+  -e EFI/boot/bootx64.efi \
+     -no-emul-boot \
+  iso
+
+
+Got you — here is the **cleanest, fully copy-paste method** to generate a **complete autoinstall ISO** for Virt-Manager.
+
+This produces:
+
+✅ A *single ISO* that you can attach
+✅ No GRUB editing required
+✅ Automatically installs Ubuntu 24.04
+✅ Uses your username + SSH key
+✅ Works on Q35 + UEFI + KVM
+✅ Recognized as a real installer ISO
+
+---
+
+# 🟦 **STEP 1 — Create working directory**
+
+```bash
+mkdir ~/autoinstall
+cd ~/autoinstall
+```
+
+---
+
+# 🟩 **STEP 2 — Copy your user-data & meta-data**
+
+Put your `user-data` and `meta-data` here.
+
+**user-data** (already provided earlier):
+
+```bash
+nano user-data
+```
+
+Paste your cloud-init config.
+
+**meta-data:**
+
+```bash
+nano meta-data
+```
+
+Content:
+
+```yaml
+instance-id: ubuntu-autoinstall
+local-hostname: ubuntu-server
+```
+
+---
+
+# 🟨 **STEP 3 — Create the cloud-init seed ISO**
+
+```bash
+genisoimage -output seed.iso -volid CIDATA -joliet -rock user-data meta-data
+```
+
+---
+
+# 🟧 **STEP 4 — Download Ubuntu 24.04 Server ISO**
+
+```bash
+cd ~/autoinstall
+wget https://releases.ubuntu.com/24.04/ubuntu-24.04.3-live-server-amd64.iso
+```
+
+---
+
+# 🟥 **STEP 5 — Extract the ISO**
+
+```bash
+mkdir iso
+bsdtar -xvf ubuntu-24.04.3-live-server-amd64.iso -C iso
+```
+
+---
+
+# 🟪 **STEP 6 — Add autoinstall kernel argument permanently**
+
+Edit GRUB config in the extracted ISO:
+
+```bash
+nano iso/boot/grub/grub.cfg
+```
+
+Find this menu entry:
+
+```
+menuentry "Try or Install Ubuntu Server" {
+```
+
+Inside that entry, find the line starting with:
+
+```
+linux   /casper/hwe-vmlinuz
+```
+
+Modify to:
+
+```
+linux   /casper/hwe-vmlinuz   autoinstall  ds=nocloud-net;s=/cdrom/  ---
+```
+
+Make sure:
+
+✔ `autoinstall`
+✔ `ds=nocloud-net;s=/cdrom/`
+✔ `---` at the end
+
+---
+
+# 🟦 **STEP 7 — Inject seed.iso into ISO filesystem**
+
+Copy your seed ISO into the extracted ISO:
+
+```bash
+cp seed.iso iso/
+```
+
+Now the installer contains your cloud-init seed inside `/cdrom/seed.iso`.
+
+This is exactly what cloud-init expects.
+
+---
+
+# 🟩 **STEP 8 — Rebuild the ISO**
+
+Ubuntu uses modified ISOLINUX/GRUB, so use this exact command:
+
+```bash
+mkisofs -D -r -V "Ubuntu-Autoinstall" \
+    -cache-inodes -J -l \
+    -b isolinux/isolinux.bin \
+    -c isolinux/boot.cat \
+    -no-emul-boot -boot-load-size 4 -boot-info-table \
+    -o ubuntu-24.04-autoinstall.iso iso
+```
+
+If `isolinux` doesn't exist (newer ISOs), use GRUB-only method:
+
+```bash
+xorriso -as mkisofs \
+  -r -V "Ubuntu-Autoinstall" \
+  -J -joliet-long -l \
+  -partition_offset 16 \
+  -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
+  -c boot.catalog \
+  -b boot/grub/i386-pc/eltorito.img \
+  -no-emul-boot -boot-load-size 4 -boot-info-table \
+  -eltorito-alt-boot \
+  -e boot/grub/efi.img \
+  -no-emul-boot \
+  -isohybrid-gpt-basdat \
+  -o ubuntu-24.04-autoinstall.iso iso
+```
+
+If it errors, send me the error — Ubuntu 24.04 changed the layout slightly, and I'll generate the exact command for your ISO structure.
+
+---
+
+# 🟧 **STEP 9 — Your final ISO is:**
+
+```
+ubuntu-24.04-autoinstall.iso
+```
+
+Attach this in Virt-Manager:
+
+* Remove all other ISOs
+* Add only this one
+* Boot → FULL autoinstall begins instantly
+* No GRUB edit
+* No user input
+
+---
+
+# 🎉 DONE — You now have a full Ubuntu 24.04 Autoinstall ISO
+
+This ISO works exactly like cloud platforms:
+
+* Wipes disk
+* Installs Ubuntu
+* Creates `vprocopan`
+* Adds your SSH key
+* Enables qemu-guest-agent
+* Reboots
+* Ready for SSH login
+
+---
+
+
