@@ -88,7 +88,7 @@ This setup:
 Everything is now ready for:
 
 ```bash
-ansible-playbook -i inventory/sample/hosts.yaml cluster.yml
+ansible-playbook -i /inventory/inventory.ini --private-key /root/.ssh/id_ed25519 cluster.yml
 ```
 
 ---
