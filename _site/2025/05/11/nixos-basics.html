@@ -1,0 +1,17 @@
+<p><strong>How to install package in NixOS</strong></p>
+
+<p>sudo nano /etc/nixos/configuration.nix</p>
+
+<p>sudo nixos-rebuild switch</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>environment.systemPackages = with pkgs; [
+  google-chrome
+  telegram-desktop
+  lens
+
+  vim
+  wget
+  git
+  vscode
+  ];
+</code></pre></div></div>

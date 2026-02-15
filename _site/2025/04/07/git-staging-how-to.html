@@ -1,0 +1,77 @@
+<p>Using <strong>staging in Git</strong> means you’re preparing changes for a commit. Here’s a breakdown of how it works and the commands you use:</p>
+
+<hr />
+
+<h3 id="-what-is-the-staging-area">🧠 What is the <strong>Staging Area</strong>?</h3>
+<p>Think of the <strong>staging area</strong> (also called the <strong>index</strong>) as a buffer between your working directory and your project history (commits). It lets you group and review changes before saving them permanently with a commit.</p>
+
+<hr />
+
+<h3 id="️-common-git-staging-commands">🛠️ Common Git Staging Commands</h3>
+
+<h4 id="1-check-whats-changed">1. <strong>Check what’s changed</strong></h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git status
+</code></pre></div></div>
+<ul>
+  <li>Shows which files are <strong>modified</strong>, <strong>new</strong>, or <strong>deleted</strong>, and whether they are staged or not.</li>
+</ul>
+
+<h4 id="2-stage-a-specific-file">2. <strong>Stage a specific file</strong></h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add &lt;filename&gt;
+</code></pre></div></div>
+<ul>
+  <li>Adds the changes in that file to the staging area.</li>
+</ul>
+
+<h4 id="3-stage-all-changed-files">3. <strong>Stage all changed files</strong></h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add <span class="nb">.</span>
+</code></pre></div></div>
+<ul>
+  <li>Stages everything in the current directory and below.</li>
+</ul>
+
+<h4 id="4-stage-part-of-a-file-interactive">4. <strong>Stage part of a file (interactive)</strong></h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add <span class="nt">-p</span>
+</code></pre></div></div>
+<ul>
+  <li>Lets you stage specific <em>hunks</em> (sections) of a file. Great for committing logically separated changes.</li>
+</ul>
+
+<h4 id="5-unstage-a-file">5. <strong>Unstage a file</strong></h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git restore <span class="nt">--staged</span> &lt;filename&gt;
+</code></pre></div></div>
+<ul>
+  <li>Removes the file from the staging area (but keeps the changes in your working directory).</li>
+</ul>
+
+<h4 id="6-view-whats-staged">6. <strong>View what’s staged</strong></h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git diff <span class="nt">--staged</span>
+</code></pre></div></div>
+<ul>
+  <li>Shows the differences between the <strong>staged</strong> files and the <strong>last commit</strong>.</li>
+</ul>
+
+<h4 id="7-commit-staged-changes">7. <strong>Commit staged changes</strong></h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git commit <span class="nt">-m</span> <span class="s2">"Your commit message"</span>
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="-example-workflow">🧪 Example Workflow</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 1. Make changes to files</span>
+<span class="c"># 2. Check status</span>
+git status
+
+<span class="c"># 3. Stage a file</span>
+git add app.js
+
+<span class="c"># 4. Confirm what's staged</span>
+git diff <span class="nt">--staged</span>
+
+<span class="c"># 5. Commit the staged file</span>
+git commit <span class="nt">-m</span> <span class="s2">"Add new feature to app.js"</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>Want a visual Git staging tool too? Tools like <strong>GitKraken</strong>, <strong>SourceTree</strong>, or <code class="language-plaintext highlighter-rouge">git gui</code> can help.</p>

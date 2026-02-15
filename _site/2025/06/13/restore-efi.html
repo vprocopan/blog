@@ -1,0 +1,129 @@
+<p>To repair the EFI (Extensible Firmware Interface) system partition on a drive, you’ll typically need a live Linux or Windows recovery environment, depending on your operating system. Below are step-by-step guides for both <strong>Windows</strong> and <strong>Linux</strong> systems.</p>
+
+<hr />
+
+<h2 id="-for-windows-systems">🪟 <strong>For Windows Systems</strong></h2>
+
+<h3 id="-requirements">🔧 Requirements:</h3>
+
+<ul>
+  <li>Windows installation media (USB/DVD)</li>
+  <li>Admin access to recovery environment</li>
+</ul>
+
+<h3 id="-steps">✅ Steps:</h3>
+
+<ol>
+  <li>
+    <p><strong>Boot into Windows Recovery Environment (WinRE)</strong>:</p>
+
+    <ul>
+      <li>Boot from Windows installation media.</li>
+      <li>Choose your language, then click <strong>“Repair your computer”</strong>.</li>
+      <li>Select <strong>Troubleshoot &gt; Advanced Options &gt; Command Prompt</strong>.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Find your EFI partition</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>diskpart
+list disk
+<span class="k">select </span>disk 0             <span class="c"># (or your OS drive)</span>
+list partition
+<span class="k">select </span>partition X        <span class="c"># (usually ~100MB, type: EFI)</span>
+assign <span class="nv">letter</span><span class="o">=</span>s
+<span class="nb">exit</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Rebuild the EFI boot files</strong>:</p>
+
+    <ul>
+      <li>
+        <p>Run this from the command prompt:</p>
+
+        <pre><code class="language-cmd">bcdboot C:\Windows /s S: /f UEFI
+</code></pre>
+      </li>
+      <li>
+        <p>This copies boot files to the EFI system partition and recreates the BCD store.</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Reboot</strong>:</p>
+
+    <pre><code class="language-cmd">exit
+</code></pre>
+
+    <p>Remove installation media and reboot your system.</p>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="-for-linux-systems-eg-grub-on-ubuntudebian">🐧 <strong>For Linux Systems (e.g., GRUB on Ubuntu/Debian)</strong></h2>
+
+<h3 id="-requirements-1">🔧 Requirements:</h3>
+
+<ul>
+  <li>Live USB of your Linux distro</li>
+  <li>Root access in chroot environment</li>
+</ul>
+
+<h3 id="-steps-1">✅ Steps:</h3>
+
+<ol>
+  <li>
+    <p><strong>Boot into Live USB</strong> and open a terminal.</p>
+  </li>
+  <li>
+    <p><strong>Identify partitions</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>fdisk <span class="nt">-l</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Note your EFI partition (usually <code class="language-plaintext highlighter-rouge">/dev/sdX1</code>, FAT32, ~100–500MB)</li>
+      <li>Note your Linux root partition (e.g., <code class="language-plaintext highlighter-rouge">/dev/sdX2</code>)</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Mount and chroot into your system</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mount /dev/sdX2 /mnt
+<span class="nb">sudo </span>mount /dev/sdX1 /mnt/boot/efi
+<span class="nb">sudo </span>mount <span class="nt">--bind</span> /dev /mnt/dev
+<span class="nb">sudo </span>mount <span class="nt">--bind</span> /proc /mnt/proc
+<span class="nb">sudo </span>mount <span class="nt">--bind</span> /sys /mnt/sys
+<span class="nb">sudo chroot</span> /mnt
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Reinstall GRUB and update config</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>grub-install <span class="nt">--target</span><span class="o">=</span>x86_64-efi <span class="nt">--efi-directory</span><span class="o">=</span>/boot/efi <span class="nt">--bootloader-id</span><span class="o">=</span>GRUB
+update-grub
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Exit and reboot</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">exit
+sudo </span>umount <span class="nt">-R</span> /mnt
+<span class="nb">sudo </span>reboot
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="-notes">🧠 Notes:</h2>
+
+<ul>
+  <li>Make sure <strong>UEFI</strong> is enabled in BIOS settings.</li>
+  <li>On Windows, <code class="language-plaintext highlighter-rouge">bcdboot</code> repairs both the BCD and EFI files.</li>
+  <li>On Linux, <code class="language-plaintext highlighter-rouge">grub-install</code> + <code class="language-plaintext highlighter-rouge">update-grub</code> restores bootloader in EFI.</li>
+</ul>
+
+<hr />

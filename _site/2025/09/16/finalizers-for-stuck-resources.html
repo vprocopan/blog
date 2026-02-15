@@ -1,0 +1,10 @@
+<h2 id="if-a-namespace-in-k8s-gets-stuck-terminating-it-means-finalizers-are-not-removed-it-can-be-done-with-the-following-command">If a namespace in K8s gets stuck terminating, it means finalizers are not removed. It can be done with the following command.</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get ns opentelemetry-kube-stack -o json | jq '.spec.finalizers=[]' | kubectl replace --raw "/api/v1/namespaces/opentelemetry-kube-stack/finalize" -f - 
+</code></pre></div></div>
+
+<h2 id="if-argocd-application-gets-stuck">If argocd application gets stuck</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">kubectl -n argocd patch application opentelemetry-kube-stack \</span>
+  <span class="s">-p '{"metadata":{"finalizers":[]}}' --type=merge</span>
+</code></pre></div></div>

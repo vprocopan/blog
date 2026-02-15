@@ -1,0 +1,57 @@
+<p>If you want <strong>apt to update ONLY the Jenkins package</strong> (and not upgrade the whole system), use:</p>
+
+<hr />
+
+<h2 id="-1-update-package-index">✅ <strong>1. Update package index</strong></h2>
+
+<p>You must always update sources first:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-2-upgrade-only-the-jenkins-package">✅ <strong>2. Upgrade ONLY the Jenkins package</strong></h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">--only-upgrade</span> jenkins
+</code></pre></div></div>
+
+<p>This will:</p>
+
+<ul>
+  <li>NOT install new packages</li>
+  <li>NOT update anything else</li>
+  <li>ONLY upgrade the <code class="language-plaintext highlighter-rouge">jenkins</code> package if an update exists</li>
+</ul>
+
+<hr />
+
+<h2 id="-check-version-afterwards">🔍 Check version afterwards:</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dpkg <span class="nt">-l</span> | <span class="nb">grep </span>jenkins
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-if-jenkins-is-installed-via-repo-recommended">📝 If Jenkins is installed via repo (recommended)</h2>
+
+<p>Make sure your <code class="language-plaintext highlighter-rouge">/etc/apt/sources.list.d/jenkins.list</code> is correct:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>deb https://pkg.jenkins.io/debian-stable binary/
+</code></pre></div></div>
+
+<p>Then run the upgrade command above.</p>
+
+<hr />
+
+<h2 id="-if-you-want-to-prevent-other-packages-from-upgrading">⛔ If you want to prevent other packages from upgrading</h2>
+
+<p>You can hold the rest:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-mark hold <span class="s1">'*'</span>
+<span class="nb">sudo </span>apt-mark unhold jenkins
+</code></pre></div></div>
+
+<p>But normally unnecessary — the <code class="language-plaintext highlighter-rouge">--only-upgrade</code> flag is enough.</p>
+
+<hr />

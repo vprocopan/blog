@@ -1,0 +1,117 @@
+<h1 id="yaml-maps-vs-lists-a-quick-guide">YAML Maps vs Lists: A Quick Guide</h1>
+
+<p>YAML uses two fundamental data structures: <strong>maps</strong> (key/value pairs) and <strong>lists</strong> (ordered sequences). Understanding the difference is essential for writing clear, structured configuration files.</p>
+
+<hr />
+
+<h2 id="-1-maps-key--value-pairs">📌 1. Maps (Key → Value Pairs)</h2>
+
+<p>Maps are like a <strong>dictionary in Python</strong> or an <strong>object in JSON</strong>.</p>
+
+<ul>
+  <li>Keys must be <strong>unique</strong>.</li>
+  <li>Values can be <strong>strings, numbers, booleans, lists, or other maps</strong>.</li>
+  <li>Order is usually not important (YAML preserves order, but semantically it doesn’t matter).</li>
+</ul>
+
+<p><strong>Example (YAML):</strong></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">person</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">Alice</span>
+  <span class="na">age</span><span class="pi">:</span> <span class="m">30</span>
+  <span class="na">city</span><span class="pi">:</span> <span class="s">Paris</span>
+</code></pre></div></div>
+
+<p><strong>Equivalent (JSON):</strong></p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w"> </span><span class="nl">"person"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Alice"</span><span class="p">,</span><span class="w"> </span><span class="nl">"age"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Paris"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<hr />
+
+<h2 id="-2-lists-ordered-sequences">📌 2. Lists (Ordered Sequences)</h2>
+
+<p>Lists are like a <strong>list in Python</strong> or an <strong>array in JSON</strong>.</p>
+
+<ul>
+  <li>Defined using a leading <code class="language-plaintext highlighter-rouge">-</code> (dash).</li>
+  <li><strong>Order matters.</strong></li>
+  <li>Items can be strings, numbers, maps, or even other lists.</li>
+</ul>
+
+<p><strong>Example (YAML):</strong></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">fruits</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">apple</span>
+  <span class="pi">-</span> <span class="s">banana</span>
+  <span class="pi">-</span> <span class="s">cherry</span>
+</code></pre></div></div>
+
+<p><strong>Equivalent (JSON):</strong></p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w"> </span><span class="nl">"fruits"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"apple"</span><span class="p">,</span><span class="w"> </span><span class="s2">"banana"</span><span class="p">,</span><span class="w"> </span><span class="s2">"cherry"</span><span class="p">]</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<hr />
+
+<h2 id="-3-combining-maps-and-lists">📌 3. Combining Maps and Lists</h2>
+
+<p>YAML allows you to nest maps inside lists and vice versa.</p>
+
+<p><strong>Example (YAML):</strong></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">users</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Alice</span>
+    <span class="na">role</span><span class="pi">:</span> <span class="s">admin</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Bob</span>
+    <span class="na">role</span><span class="pi">:</span> <span class="s">user</span>
+</code></pre></div></div>
+
+<p>Here:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">users</code> is a <strong>list</strong>.</li>
+  <li>Each list item is a <strong>map</strong> with <code class="language-plaintext highlighter-rouge">name</code> and <code class="language-plaintext highlighter-rouge">role</code> keys.</li>
+</ul>
+
+<hr />
+
+<h2 id="-quick-comparison">✅ Quick Comparison</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Map (Key/Value)</th>
+      <th>List (Ordered Items)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Structure</td>
+      <td>Key → Value pairs</td>
+      <td>Sequence of items</td>
+    </tr>
+    <tr>
+      <td>Uniqueness</td>
+      <td>Keys must be unique</td>
+      <td>Items can repeat</td>
+    </tr>
+    <tr>
+      <td>Order</td>
+      <td>Not semantically important</td>
+      <td>Order matters</td>
+    </tr>
+    <tr>
+      <td>Access by</td>
+      <td>Key name</td>
+      <td>Index number</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<p>👉 <strong>In short:</strong> Use maps when you need <strong>labeled data</strong> (like config options), and lists when you need an <strong>ordered collection</strong> (like a sequence of items).</p>
+
+<hr />

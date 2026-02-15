@@ -1,0 +1,87 @@
+<h2 id="-run-kubespray-container">🐳 <strong>Run Kubespray container</strong></h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--rm</span> <span class="nt">-it</span> <span class="se">\</span>
+  <span class="nt">--mount</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bind</span>,source<span class="o">=</span><span class="s2">"</span><span class="si">$(</span><span class="nb">pwd</span><span class="si">)</span><span class="s2">"</span>/inventory/sample,dst<span class="o">=</span>/inventory <span class="se">\</span>
+  <span class="nt">--mount</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bind</span>,source<span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">HOME</span><span class="k">}</span><span class="s2">"</span>/.ssh/id_ed25519,dst<span class="o">=</span>/root/.ssh/id_ed25519 <span class="se">\</span>
+  quay.io/kubespray/kubespray:v2.29.0 bash
+</code></pre></div></div>
+
+<hr />
+
+<h1 id="️-kube-vip-configuration">⚙️ kube-vip Configuration</h1>
+
+<p>You will edit:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">inventory/sample/group_vars/k8s-cluster/addons.yml</code></li>
+  <li><code class="language-plaintext highlighter-rouge">inventory/sample/group_vars/k8s-cluster/k8s-cluster.yml</code></li>
+</ul>
+
+<hr />
+
+<h2 id="-addonsyml--enable-kube-vip">🟦 <strong>addons.yml — Enable kube-vip</strong></h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Enable kube-vip for API server load balancing</span>
+<span class="na">kube_vip_enabled</span><span class="pi">:</span> <span class="kc">true</span>
+
+<span class="c1"># Virtual IP for your Kubernetes control-plane</span>
+<span class="na">kube_vip_address</span><span class="pi">:</span> <span class="s">192.168.100.10</span>
+
+<span class="c1"># API Server Load Balancer</span>
+<span class="na">loadbalancer_apiserver</span><span class="pi">:</span>
+  <span class="na">address</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+  <span class="na">port</span><span class="pi">:</span> <span class="m">6443</span>
+
+<span class="c1"># Interface where the VIP will be bound</span>
+<span class="na">kube_vip_interface</span><span class="pi">:</span> <span class="s">eth0</span>
+
+<span class="c1"># Enable ARP mode (Layer2)</span>
+<span class="na">kube_vip_arp_enabled</span><span class="pi">:</span> <span class="kc">true</span>
+<span class="na">kube_vip_controlplane_enabled</span><span class="pi">:</span> <span class="kc">true</span>
+
+<span class="c1"># Service LoadBalancer functionality (disabled)</span>
+<span class="na">kube_vip_services_enabled</span><span class="pi">:</span> <span class="kc">false</span>
+
+<span class="c1"># DNS resolution mode</span>
+<span class="na">kube_vip_dns_mode</span><span class="pi">:</span> <span class="s">first</span>
+
+<span class="c1"># Misc kube-vip options</span>
+<span class="na">kube_vip_cp_detect</span><span class="pi">:</span> <span class="kc">false</span>
+<span class="na">kube_vip_lb_fwdmethod</span><span class="pi">:</span> <span class="s">local</span>
+<span class="na">kube_vip_enable_node_labeling</span><span class="pi">:</span> <span class="kc">false</span>
+
+<span class="c1"># Run kube-vip pod in hostNetwork with NET_ADMIN capability</span>
+<span class="na">kube_vip_pod_hostnetwork</span><span class="pi">:</span> <span class="kc">true</span>
+<span class="na">kube_vip_pod_capabilities</span><span class="pi">:</span>
+  <span class="na">add</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">NET_ADMIN</span>
+</code></pre></div></div>
+
+<hr />
+
+<h1 id="-k8s-clusteryml--required-arp-fix">🔧 <strong>k8s-cluster.yml — Required ARP Fix</strong></h1>
+
+<p>kube-vip <strong>requires</strong> strict ARP mode in kube-proxy.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">kube_proxy_strict_arp</span><span class="pi">:</span> <span class="kc">true</span>
+</code></pre></div></div>
+
+<hr />
+
+<h1 id="️-summary">✔️ Summary</h1>
+<p>This setup:</p>
+
+<ul>
+  <li>Enables kube-vip as the <strong>control-plane load balancer</strong></li>
+  <li>Uses <strong>Layer2 (ARP) mode</strong></li>
+  <li>Assigns a static VIP: <code class="language-plaintext highlighter-rouge">192.168.100.10</code></li>
+  <li>Ensures kube-proxy is correctly configured (<code class="language-plaintext highlighter-rouge">strict_arp: true</code>)</li>
+  <li>Runs kube-vip with the necessary NET_ADMIN capability</li>
+</ul>
+
+<p>Everything is now ready for:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ansible-playbook <span class="nt">-i</span> /inventory/inventory.ini <span class="nt">--private-key</span> /root/.ssh/id_ed25519 cluster.yml
+</code></pre></div></div>
+
+<hr />

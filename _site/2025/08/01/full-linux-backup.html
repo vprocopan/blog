@@ -1,0 +1,134 @@
+<p>This command creates a <strong>full system backup</strong> using <code class="language-plaintext highlighter-rouge">tar</code>, with special options to preserve ownership, ACLs, and extended attributes. Let’s break it down:</p>
+
+<hr />
+
+<h2 id="-full-command">🧾 Full Command</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tar</span> <span class="nt">--numeric-owner</span> <span class="nt">--xattrs</span> <span class="nt">--acls</span> <span class="nt">-cvpzf</span> /mnt/backup/system.tar.gz <span class="se">\</span>
+  <span class="nt">--exclude</span><span class="o">=</span>/mnt/backup <span class="nt">--exclude</span><span class="o">=</span>/proc <span class="nt">--exclude</span><span class="o">=</span>/sys <span class="se">\</span>
+  <span class="nt">--exclude</span><span class="o">=</span>/dev <span class="nt">--exclude</span><span class="o">=</span>/run /
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-option-by-option-breakdown">🧩 Option-by-option breakdown:</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">tar</code></td>
+      <td>The command-line archiving tool</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--numeric-owner</code></td>
+      <td>Save numeric user/group IDs instead of names (important for restoring on different systems)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--xattrs</code></td>
+      <td>Include extended file attributes (like SELinux labels or user-defined metadata)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">--acls</code></td>
+      <td>Include Access Control Lists (fine-grained permission info)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-c</code></td>
+      <td>Create a new archive</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-v</code></td>
+      <td>Verbose — show files being processed</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-p</code></td>
+      <td>Preserve file permissions</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-z</code></td>
+      <td>Compress the archive using gzip</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">-f /mnt/backup/system.tar.gz</code></td>
+      <td>Output file path for the archive</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="-excluded-paths">🚫 Excluded Paths</h2>
+
+<p>These are excluded because they are <strong>dynamic, pseudo, or would cause issues</strong> if archived:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Path</th>
+      <th>Reason for Exclusion</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">/mnt/backup</code></td>
+      <td>Prevent backing up the archive itself recursively</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">/proc</code></td>
+      <td>Virtual filesystem — no real files to back up</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">/sys</code></td>
+      <td>Kernel info — also virtual and dynamic</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">/dev</code></td>
+      <td>Device files (sockets, pipes, etc.)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">/run</code></td>
+      <td>Runtime system files (e.g., PID files)</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="️-target">🗂️ Target</h2>
+
+<ul>
+  <li>
+    <p>The final <code class="language-plaintext highlighter-rouge">/</code> means: archive the entire root filesystem.</p>
+  </li>
+  <li>
+    <p>It creates: <code class="language-plaintext highlighter-rouge">/mnt/backup/system.tar.gz</code></p>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="-usage-notes">🧠 Usage Notes</h2>
+
+<ul>
+  <li>
+    <p>Run as <strong>root</strong> (<code class="language-plaintext highlighter-rouge">sudo</code>) to ensure access to all files.</p>
+  </li>
+  <li>
+    <p>You can later restore with:</p>
+  </li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo tar</span> <span class="nt">--xattrs</span> <span class="nt">--acls</span> <span class="nt">-xvpzf</span> system.tar.gz <span class="nt">-C</span> /
+</code></pre></div></div>
+
+<blockquote>
+  <p>Make sure to boot into rescue or live mode before restoring the root FS.</p>
+</blockquote>
+
+<hr />
+

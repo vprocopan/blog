@@ -1,0 +1,15 @@
+<p>To find out which directory occupies the most space in your root (<code class="language-plaintext highlighter-rouge">/</code>) filesystem, use:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo du</span> <span class="nt">-h</span> <span class="nt">--max-depth</span><span class="o">=</span>1 / | <span class="nb">sort</span> <span class="nt">-hr</span> | <span class="nb">head</span> <span class="nt">-n</span> 10
+</code></pre></div></div>
+
+<h3 id="explanation">Explanation:</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">sudo</code>: Ensures you have permission to read all directories.</li>
+  <li><code class="language-plaintext highlighter-rouge">du -h --max-depth=1 /</code>: Shows disk usage for each top-level directory under <code class="language-plaintext highlighter-rouge">/</code> in human-readable format.</li>
+  <li><code class="language-plaintext highlighter-rouge">sort -hr</code>: Sorts the output by size in human-readable format (e.g., <code class="language-plaintext highlighter-rouge">10G</code> &gt; <code class="language-plaintext highlighter-rouge">500M</code>).</li>
+  <li><code class="language-plaintext highlighter-rouge">head -n 10</code>: Shows the top 10 largest directories.</li>
+</ul>
+
+<p>This will help you quickly identify which top-level folders (like <code class="language-plaintext highlighter-rouge">/var</code>, <code class="language-plaintext highlighter-rouge">/usr</code>, <code class="language-plaintext highlighter-rouge">/home</code>) are taking up the most space.</p>

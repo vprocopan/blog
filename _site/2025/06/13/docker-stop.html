@@ -1,0 +1,93 @@
+<p><strong>you <em>can</em> stop iptables</strong>, but <strong>Docker will <em>not</em> work correctly without it</strong> — at least not for networking.</p>
+
+<hr />
+
+<h3 id="-heres-what-will-break-if-you-stop-iptables">🔥 Here’s what will break if you stop <code class="language-plaintext highlighter-rouge">iptables</code>:</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Effect of stopping <code class="language-plaintext highlighter-rouge">iptables</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>🐳 Container-to-container communication</td>
+      <td>❌ Likely to break</td>
+    </tr>
+    <tr>
+      <td>🌍 Port publishing (<code class="language-plaintext highlighter-rouge">-p 8080:80</code>)</td>
+      <td>❌ Will no longer be routed to container</td>
+    </tr>
+    <tr>
+      <td>🛡️ NAT/bridge networking</td>
+      <td>❌ Broken (DNAT/SNAT won’t happen)</td>
+    </tr>
+    <tr>
+      <td>🧱 Docker bridge isolation</td>
+      <td>❌ Broken (containers may become reachable in unsafe ways)</td>
+    </tr>
+    <tr>
+      <td>📡 Host to container via mapped ports</td>
+      <td>❌ Will stop working unless you’re using <code class="language-plaintext highlighter-rouge">--network=host</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h3 id="️-why-docker-needs-iptables">⚠️ Why Docker Needs iptables</h3>
+
+<p>Docker uses <code class="language-plaintext highlighter-rouge">iptables</code> rules to:</p>
+
+<ul>
+  <li>Handle <strong>NAT</strong> (e.g., <code class="language-plaintext highlighter-rouge">PREROUTING</code> for <code class="language-plaintext highlighter-rouge">-p 80:80</code>)</li>
+  <li>Control <strong>bridge</strong> traffic (for <code class="language-plaintext highlighter-rouge">docker0</code> and user-defined bridges)</li>
+  <li>Enforce <strong>isolation</strong> between containers and the outside world</li>
+</ul>
+
+<p>These rules are automatically created by the Docker daemon unless you explicitly disable them (which is not recommended unless you manage them manually).</p>
+
+<hr />
+
+<h3 id="-safe-alternatives">✅ Safe Alternatives</h3>
+
+<p>If you’re debugging or trying to <em>isolate</em> an issue:</p>
+
+<ul>
+  <li>
+    <p>Flush only the <code class="language-plaintext highlighter-rouge">nat</code> or <code class="language-plaintext highlighter-rouge">filter</code> chains:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iptables <span class="nt">-t</span> nat <span class="nt">-F</span>
+<span class="nb">sudo </span>iptables <span class="nt">-F</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Restart Docker afterward to repopulate rules:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart docker
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<hr />
+
+<h3 id="-dont-do-this-unless-in-testingsandbox">❌ Don’t do this (unless in testing/sandbox):</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl stop iptables
+</code></pre></div></div>
+
+<p>This will kill all firewall rules including the ones Docker relies on for:</p>
+
+<ul>
+  <li>Port forwarding (<code class="language-plaintext highlighter-rouge">-p</code>)</li>
+  <li>NAT translation</li>
+  <li>Bridge routing</li>
+</ul>
+
+<hr />
+
+<p><strong>Conclusion:</strong>
+Stopping iptables is not recommended unless you’re running Docker in <code class="language-plaintext highlighter-rouge">--network=host</code> mode or in a restricted custom environment (e.g. Kubernetes CNI plugin with its own rules). Instead, <strong>clear or adjust specific chains if needed</strong>, and let Docker manage the rules automatically.</p>
+

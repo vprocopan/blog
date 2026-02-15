@@ -1,0 +1,79 @@
+<p>Here’s how you can securely expose Code Server over HTTPS using Cloudflare Tunnel (cloudflared), step by step:</p>
+
+<p>⸻</p>
+
+<p>✅ Prerequisites
+	•	You have a domain registered in Cloudflare (e.g., example.com).
+	•	You have cloudflared installed.
+	•	code-server is already installed and running on localhost:8080 or similar.
+	•	You have a Cloudflare account and access to the dashboard.</p>
+
+<p>⸻</p>
+
+<p>🛠 Step 1: Authenticate cloudflared with Cloudflare</p>
+
+<p>Run:</p>
+
+<p>cloudflared tunnel login</p>
+
+<p>This will open a browser to authenticate with Cloudflare and select the domain you own.</p>
+
+<p>⸻</p>
+
+<p>🛠 Step 2: Create a tunnel</p>
+
+<p>cloudflared tunnel create code-server</p>
+
+<p>This creates a new tunnel named code-server and outputs a Tunnel ID. It also creates credentials in:</p>
+
+<p>~/.cloudflared/<TunnelID>.json</TunnelID></p>
+
+<p>⸻</p>
+
+<p>🛠 Step 3: Create a config file</p>
+
+<p>Create the config file at: ~/.cloudflared/config.yml</p>
+
+<p>tunnel: code-server
+credentials-file: /home/YOUR_USERNAME/.cloudflared/<TunnelID>.json</TunnelID></p>
+
+<p>ingress:</p>
+<ul>
+  <li>hostname: code.example.com
+service: http://localhost:8080</li>
+  <li>service: http_status:404</li>
+</ul>
+
+<p>Replace:
+	•	YOUR_USERNAME → your actual Linux username.
+	•	code.example.com → your desired subdomain.
+	•	localhost:8080 → your Code Server port.</p>
+
+<p>⸻</p>
+
+<p>🛠 Step 4: Add a DNS record (automatically)</p>
+
+<p>Run this to start the tunnel and update DNS:</p>
+
+<p>cloudflared tunnel route dns code-server code.example.com</p>
+
+<p>⸻</p>
+
+<p>🛠 Step 5: Start the tunnel</p>
+
+<p>Now start the tunnel:</p>
+
+<p>cloudflared tunnel run code-server</p>
+
+<p>You can now access Code Server via https://code.example.com securely through Cloudflare Tunnel.</p>
+
+<p>⸻</p>
+
+<p>🚀 Optional: Run the tunnel as a systemd service</p>
+
+<p>sudo cloudflared service install</p>
+
+<p>This ensures it starts on boot.</p>
+
+<p>⸻</p>
+

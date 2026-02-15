@@ -1,0 +1,384 @@
+<p>To expose Traefik on <strong>one IP using NodePort</strong> and route external traffic through it, follow this step-by-step setup. This is ideal when you <strong>don’t have a cloud provider</strong> or <strong>want to control traffic using your own router, Nginx reverse proxy, or something like Cloudflare Tunnel</strong>.</p>
+
+<hr />
+
+<h2 id="-step-by-step-expose-traefik-via-nodeport-and-use-one-external-ip">✅ Step-by-Step: Expose Traefik via NodePort and Use One External IP</h2>
+
+<hr />
+
+<h3 id="1-deploy-traefik-via-helm-with-nodeport"><strong>1. Deploy Traefik via Helm with NodePort</strong></h3>
+
+<p>If you’re using Helm (recommended):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>helm repo add traefik https://traefik.github.io/charts
+helm repo update
+</code></pre></div></div>
+
+<p>Install Traefik with NodePort enabled:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>helm <span class="nb">install </span>traefik traefik/traefik <span class="se">\</span>
+  <span class="nt">--namespace</span> kube-system <span class="nt">--create-namespace</span> <span class="se">\</span>
+  <span class="nt">--set</span> service.type<span class="o">=</span>NodePort <span class="se">\</span>
+  <span class="nt">--set</span> service.ports.web.nodePort<span class="o">=</span>30080 <span class="se">\</span>
+  <span class="nt">--set</span> service.ports.websecure.nodePort<span class="o">=</span>30443
+</code></pre></div></div>
+
+<p>This will:</p>
+
+<ul>
+  <li>Deploy Traefik in <code class="language-plaintext highlighter-rouge">kube-system</code> namespace.</li>
+  <li>
+    <p>Expose:</p>
+
+    <ul>
+      <li>HTTP on port <code class="language-plaintext highlighter-rouge">30080</code></li>
+      <li>HTTPS on port <code class="language-plaintext highlighter-rouge">30443</code></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h3 id="2-get-node-ip-external-or-internal"><strong>2. Get Node IP (External or Internal)</strong></h3>
+
+<p>You need the IP of one of your Kubernetes nodes (ideally the one with internet access):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get nodes <span class="nt">-o</span> wide
+</code></pre></div></div>
+
+<p>Pick the <code class="language-plaintext highlighter-rouge">EXTERNAL-IP</code> (or <code class="language-plaintext highlighter-rouge">INTERNAL-IP</code> if behind NAT/router).</p>
+
+<hr />
+
+<h3 id="3-set-dns-or-external-proxy-to-point-to-that-node"><strong>3. Set DNS or External Proxy to Point to That Node</strong></h3>
+
+<p>Now route all traffic to that IP:</p>
+
+<h4 id="option-a-from-your-router-port-forwarding">Option A: From Your Router (Port Forwarding)</h4>
+
+<ul>
+  <li>Forward port <code class="language-plaintext highlighter-rouge">80</code> → <code class="language-plaintext highlighter-rouge">NODE_IP:30080</code></li>
+  <li>Forward port <code class="language-plaintext highlighter-rouge">443</code> → <code class="language-plaintext highlighter-rouge">NODE_IP:30443</code></li>
+</ul>
+
+<h4 id="option-b-with-nginx-if-installed-on-a-vm-or-external-host">Option B: With NGINX (if installed on a VM or external host)</h4>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+    <span class="kn">server_name</span> <span class="s">your-domain.com</span><span class="p">;</span>
+
+    <span class="kn">location</span> <span class="n">/</span> <span class="p">{</span>
+        <span class="kn">proxy_pass</span> <span class="s">http://NODE_IP:30080</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span> <span class="mi">443</span> <span class="s">ssl</span><span class="p">;</span>
+    <span class="kn">server_name</span> <span class="s">your-domain.com</span><span class="p">;</span>
+
+    <span class="kn">ssl_certificate</span> <span class="n">/etc/nginx/ssl/fullchain.pem</span><span class="p">;</span>
+    <span class="kn">ssl_certificate_key</span> <span class="n">/etc/nginx/ssl/privkey.pem</span><span class="p">;</span>
+
+    <span class="kn">location</span> <span class="n">/</span> <span class="p">{</span>
+        <span class="kn">proxy_pass</span> <span class="s">https://NODE_IP:30443</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="option-c-cloudflare-tunnel-optional">Option C: Cloudflare Tunnel (Optional)</h4>
+
+<p>If you want to expose Traefik securely without public IP, you can use a Cloudflare Tunnel:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cloudflared tunnel create traefik
+cloudflared tunnel route dns traefik your-domain.com
+
+<span class="c"># In config.yml</span>
+tunnel: traefik
+credentials-file: /etc/cloudflared/traefik.json
+
+ingress:
+  - <span class="nb">hostname</span>: your-domain.com
+    service: http://NODE_IP:30080
+  - service: http_status:404
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="4-deploy-ingress-or-ingressroute"><strong>4. Deploy Ingress or IngressRoute</strong></h3>
+
+<p>Here’s a basic Ingress example:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">whoami</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">default</span>
+  <span class="na">annotations</span><span class="pi">:</span>
+    <span class="na">traefik.ingress.kubernetes.io/router.entrypoints</span><span class="pi">:</span> <span class="s">web</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">rules</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">whoami.your-domain.com</span>
+      <span class="na">http</span><span class="pi">:</span>
+        <span class="na">paths</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
+            <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+            <span class="na">backend</span><span class="pi">:</span>
+              <span class="na">service</span><span class="pi">:</span>
+                <span class="na">name</span><span class="pi">:</span> <span class="s">whoami</span>
+                <span class="na">port</span><span class="pi">:</span>
+                  <span class="na">number</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div></div>
+
+<p>You can also use <code class="language-plaintext highlighter-rouge">IngressRoute</code> if you’re using CRDs.</p>
+
+<hr />
+
+<h3 id="-summary">🔁 Summary</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>NodePort</td>
+      <td>Exposes Traefik inside the cluster</td>
+    </tr>
+    <tr>
+      <td>Node External IP</td>
+      <td>Used by clients to access services</td>
+    </tr>
+    <tr>
+      <td>Reverse Proxy / Router</td>
+      <td>Forwards 80/443 to 30080/30443</td>
+    </tr>
+    <tr>
+      <td>Ingress Rules</td>
+      <td>Tell Traefik how to route traffic</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<p>Here’s a complete example of how to deploy <strong>NGINX</strong> inside your Kubernetes cluster, expose it using a <strong>ClusterIP Service</strong>, and then configure <strong>Traefik</strong> to forward traffic to it using an <strong>Ingress</strong>.</p>
+
+<hr />
+
+<h2 id="-step-1-nginx-deployment--service-clusterip">✅ Step 1: NGINX Deployment + Service (ClusterIP)</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">nginx</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">default</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">nginx</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">nginx</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:stable</span>
+          <span class="na">ports</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+<span class="nn">---</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">nginx</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">default</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nginx</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+      <span class="na">targetPort</span><span class="pi">:</span> <span class="m">80</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-step-2-traefik-ingress-to-forward-to-nginx">✅ Step 2: Traefik Ingress to Forward to NGINX</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-ingress</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">default</span>
+  <span class="na">annotations</span><span class="pi">:</span>
+    <span class="na">traefik.ingress.kubernetes.io/router.entrypoints</span><span class="pi">:</span> <span class="s">web</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">rules</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">nginx.localhost</span>
+      <span class="na">http</span><span class="pi">:</span>
+        <span class="na">paths</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
+            <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+            <span class="na">backend</span><span class="pi">:</span>
+              <span class="na">service</span><span class="pi">:</span>
+                <span class="na">name</span><span class="pi">:</span> <span class="s">nginx</span>
+                <span class="na">port</span><span class="pi">:</span>
+                  <span class="na">number</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>💡 <strong>Note</strong>: Replace <code class="language-plaintext highlighter-rouge">nginx.localhost</code> with your real domain name. You can test it locally with <code class="language-plaintext highlighter-rouge">/etc/hosts</code> like:</p>
+
+  <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>127.0.0.1 nginx.localhost
+</code></pre></div>  </div>
+</blockquote>
+
+<hr />
+
+<h2 id="-step-3-access-nginx-via-traefik">✅ Step 3: Access NGINX via Traefik</h2>
+
+<ul>
+  <li>If you’re using <strong>NodePort</strong>, Traefik is listening on <code class="language-plaintext highlighter-rouge">http://&lt;NodeIP&gt;:30080</code>.</li>
+  <li>If using <strong>LoadBalancer</strong>, Traefik is on a public IP.</li>
+  <li>
+    <p>Then:</p>
+
+    <ul>
+      <li>Visit <code class="language-plaintext highlighter-rouge">http://nginx.localhost</code> (with DNS or <code class="language-plaintext highlighter-rouge">/etc/hosts</code> pointing to the Node IP)</li>
+      <li>Traefik will route it to the internal NGINX service.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<p>To configure <strong>Traefik with ACME (Let’s Encrypt)</strong> for automatic TLS certificate generation, follow these steps. This setup enables Traefik to request and renew certificates automatically.</p>
+
+<hr />
+
+<h2 id="️-1-traefik-deployment-with-acme-enabled">🛠️ 1. Traefik Deployment with ACME Enabled</h2>
+
+<h3 id="-helm-recommended">✅ Helm (Recommended)</h3>
+
+<p>If you’re using Helm to deploy Traefik, add the following to your <code class="language-plaintext highlighter-rouge">values.yaml</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">entryPoints</span><span class="pi">:</span>
+  <span class="na">web</span><span class="pi">:</span>
+    <span class="na">address</span><span class="pi">:</span> <span class="s2">"</span><span class="s">:80"</span>
+  <span class="na">websecure</span><span class="pi">:</span>
+    <span class="na">address</span><span class="pi">:</span> <span class="s2">"</span><span class="s">:443"</span>
+
+<span class="na">certificatesResolvers</span><span class="pi">:</span>
+  <span class="na">letsencrypt</span><span class="pi">:</span>
+    <span class="na">acme</span><span class="pi">:</span>
+      <span class="na">email</span><span class="pi">:</span> <span class="s">your-email@example.com</span>
+      <span class="na">storage</span><span class="pi">:</span> <span class="s">/data/acme.json</span>
+      <span class="na">httpChallenge</span><span class="pi">:</span>
+        <span class="na">entryPoint</span><span class="pi">:</span> <span class="s">web</span>
+
+<span class="na">volumes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">acme-storage</span>
+    <span class="na">persistentVolumeClaim</span><span class="pi">:</span>
+      <span class="na">claimName</span><span class="pi">:</span> <span class="s">traefik-acme-pvc</span>
+
+<span class="na">volumeMounts</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">acme-storage</span>
+    <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/data</span>
+</code></pre></div></div>
+
+<p>Or directly with Helm CLI:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>helm repo add traefik https://traefik.github.io/charts
+helm repo update
+
+helm <span class="nb">install </span>traefik traefik/traefik <span class="se">\</span>
+  <span class="nt">--namespace</span> traefik <span class="nt">--create-namespace</span> <span class="se">\</span>
+  <span class="nt">--set</span> ports.websecure.exposed<span class="o">=</span><span class="nb">true</span> <span class="se">\</span>
+  <span class="nt">--set</span> ports.web.exposed<span class="o">=</span><span class="nb">true</span> <span class="se">\</span>
+  <span class="nt">--set</span> certificatesResolvers.letsencrypt.acme.email<span class="o">=</span>your-email@example.com <span class="se">\</span>
+  <span class="nt">--set</span> certificatesResolvers.letsencrypt.acme.storage<span class="o">=</span>/data/acme.json <span class="se">\</span>
+  <span class="nt">--set</span> certificatesResolvers.letsencrypt.acme.httpChallenge.entryPoint<span class="o">=</span>web <span class="se">\</span>
+  <span class="nt">--set</span> persistence.enabled<span class="o">=</span><span class="nb">true</span> <span class="se">\</span>
+  <span class="nt">--set</span> persistence.name<span class="o">=</span>acme-storage <span class="se">\</span>
+  <span class="nt">--set</span> persistence.accessMode<span class="o">=</span>ReadWriteOnce <span class="se">\</span>
+  <span class="nt">--set</span> persistence.size<span class="o">=</span>1Gi
+</code></pre></div></div>
+
+<blockquote>
+  <p>This creates a persistent volume to store <code class="language-plaintext highlighter-rouge">acme.json</code> so certs are retained across pod restarts.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="-2-ingressroute-with-lets-encrypt-tls">🧾 2. IngressRoute with Let’s Encrypt TLS</h2>
+
+<p>Here’s how you define an <code class="language-plaintext highlighter-rouge">IngressRoute</code> that uses the ACME resolver (<code class="language-plaintext highlighter-rouge">letsencrypt</code>):</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">traefik.io/v1alpha1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">IngressRoute</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">nginx</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">default</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">entryPoints</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">websecure</span>
+  <span class="na">routes</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">match</span><span class="pi">:</span> <span class="s">Host(`nginx.example.com`)</span>
+      <span class="na">kind</span><span class="pi">:</span> <span class="s">Rule</span>
+      <span class="na">services</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx</span>
+          <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+  <span class="na">tls</span><span class="pi">:</span>
+    <span class="na">certResolver</span><span class="pi">:</span> <span class="s">letsencrypt</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-3-required-permissions">📁 3. Required Permissions</h2>
+
+<p>Make sure the directory where <code class="language-plaintext highlighter-rouge">acme.json</code> is stored is <strong>writable</strong> by the Traefik pod. If using a PVC, you’re good. If mounting manually:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">touch </span>acme.json
+<span class="nb">chmod </span>600 acme.json
+</code></pre></div></div>
+
+<p>Mount it as a volume:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">volumeMounts</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">acme</span>
+    <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/data</span>
+<span class="na">volumes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">acme</span>
+    <span class="na">hostPath</span><span class="pi">:</span>
+      <span class="na">path</span><span class="pi">:</span> <span class="s">/etc/traefik/acme</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-4-dns-and-port-forwarding">✅ 4. DNS and Port Forwarding</h2>
+
+<ul>
+  <li>Ensure your domain (e.g., <code class="language-plaintext highlighter-rouge">nginx.example.com</code>) points to your Traefik LoadBalancer IP.</li>
+  <li>Port <strong>80</strong> must be accessible to solve the ACME HTTP-01 challenge.</li>
+</ul>
+
+<hr />
+
+<h2 id="-5-verify">🧪 5. Verify</h2>
+
+<p>Check the logs:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl logs <span class="nt">-n</span> traefik deploy/traefik
+</code></pre></div></div>
+
+<p>You should see logs showing certificate acquisition like:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>... obtained certificate for domain nginx.example.com
+</code></pre></div></div>
+
+<hr />
+<p><img src="/assets/images/local-k8s-network.png" alt="local-k8s-network" /></p>

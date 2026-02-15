@@ -1,0 +1,48 @@
+<p>To get a certificate fingerprint like:</p>
+
+<p>SHA256:qk0ns03ebk4A3DChUcbwEzRG4rUjyTlv10l7Lge88SE</p>
+
+<p>you can use the ssh-keygen or openssl command, depending on the context:</p>
+
+<p>⸻</p>
+
+<p>✅ If you’re dealing with an SSH public key file (e.g., id_rsa.pub)</p>
+
+<p>Use ssh-keygen:</p>
+
+<p>ssh-keygen -lf ~/.ssh/id_rsa.pub -E sha256</p>
+
+<p>Output:</p>
+
+<p>2048 SHA256:qk0ns03ebk4A3DChUcbwEzRG4rUjyTlv10l7Lge88SE user@hostname (RSA)</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>•	-l: Show fingerprint
+•	-f: File
+•	-E sha256: Use SHA256 hash format
+</code></pre></div></div>
+
+<p>⸻</p>
+
+<p>✅ If you’re working with an X.509 SSL certificate (e.g., cert.pem)</p>
+
+<p>Use openssl:</p>
+
+<p>openssl x509 -in cert.pem -noout -fingerprint -sha256</p>
+
+<p>Output:</p>
+
+<p>SHA256 Fingerprint=6C:5A:BE:…:88:SE</p>
+
+<p>If you want to match the base64-encoded SHA256 hash, use this:</p>
+
+<p>openssl x509 -in cert.pem -noout -pubkey <br />
+  | openssl pkey -pubin -outform DER <br />
+  | openssl dgst -sha256 -binary <br />
+  | openssl enc -base64</p>
+
+<p>That will give you something like:</p>
+
+<p>qk0ns03ebk4A3DChUcbwEzRG4rUjyTlv10l7Lge88SE=</p>
+
+<p>(strip the = for GitHub or SSH format)</p>
+

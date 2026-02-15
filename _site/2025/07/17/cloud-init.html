@@ -1,0 +1,311 @@
+<p><strong><code class="language-plaintext highlighter-rouge">cloud-init</code></strong> is a widely used tool in Linux for <strong>automatically configuring virtual machines or cloud instances at first boot</strong>. It is commonly used by cloud providers like AWS, Azure, Google Cloud, DigitalOcean, and OpenStack to perform initialization tasks when a new instance is launched.</p>
+
+<hr />
+
+<h3 id="-what-it-does">🔧 What It Does</h3>
+
+<p><code class="language-plaintext highlighter-rouge">cloud-init</code> allows automatic configuration of things like:</p>
+
+<ul>
+  <li>Setting the hostname</li>
+  <li>Creating users and setting SSH keys</li>
+  <li>Installing packages</li>
+  <li>Running shell scripts</li>
+  <li>Attaching volumes or configuring networks</li>
+  <li>Writing files (e.g., configuration files)</li>
+</ul>
+
+<hr />
+
+<h3 id="-how-it-works">📦 How It Works</h3>
+
+<ol>
+  <li>
+    <p><strong>Data Sources</strong>: It fetches instance metadata and configuration from sources like:</p>
+
+    <ul>
+      <li>EC2 metadata service</li>
+      <li>ConfigDrive (used by OpenStack)</li>
+      <li>NoCloud (for local testing with ISO or disk)</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>User-Data Script</strong>: You can pass a <strong>cloud-init script</strong> (YAML or shell) when you create an instance. This is called <strong>user data</strong>.</p>
+  </li>
+  <li>
+    <p><strong>Execution Stages</strong>:</p>
+
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">init</code>: Setup and detect data source</li>
+      <li><code class="language-plaintext highlighter-rouge">config</code>: Apply configuration (users, files, etc.)</li>
+      <li><code class="language-plaintext highlighter-rouge">final</code>: Run custom scripts</li>
+    </ul>
+  </li>
+</ol>
+
+<hr />
+
+<h3 id="-example-cloud-config-yaml">📄 Example <code class="language-plaintext highlighter-rouge">cloud-config</code> (YAML):</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#cloud-config</span>
+<span class="na">hostname</span><span class="pi">:</span> <span class="s">my-server</span>
+<span class="na">users</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">vitalie</span>
+    <span class="na">sudo</span><span class="pi">:</span> <span class="s">ALL=(ALL) NOPASSWD:ALL</span>
+    <span class="na">ssh-authorized-keys</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">ssh-rsa AAAAB3...</span>
+
+<span class="na">packages</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">htop</span>
+  <span class="pi">-</span> <span class="s">git</span>
+
+<span class="na">runcmd</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">echo "Welcome to cloud-init!" &gt; /etc/motd</span>
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="-common-use-cases">🛠 Common Use Cases</h3>
+
+<ul>
+  <li>Automating VM provisioning in CI/CD</li>
+  <li>Creating reproducible server images</li>
+  <li>Initializing Kubernetes nodes</li>
+  <li>Bootstrapping cloud infrastructure</li>
+</ul>
+
+<hr />
+
+<p>Great — since you’re using <strong>Proxmox</strong>, here’s how <code class="language-plaintext highlighter-rouge">cloud-init</code> works in that context:</p>
+
+<hr />
+
+<h3 id="️-what-is-cloud-init-in-proxmox">🖥️ What is <code class="language-plaintext highlighter-rouge">cloud-init</code> in Proxmox?</h3>
+
+<p>In <strong>Proxmox VE</strong>, <code class="language-plaintext highlighter-rouge">cloud-init</code> is used to automatically configure <strong>virtual machines (VMs)</strong> (not containers) during their <strong>first boot</strong>, especially when you’re cloning from a <strong>cloud-init enabled template</strong>.</p>
+
+<p>It is ideal for creating <strong>dynamic VMs with unique settings</strong>, such as IP addresses, SSH keys, hostnames, and user credentials, from a single template.</p>
+
+<hr />
+
+<h3 id="-typical-use-cases-in-proxmox">✅ Typical Use Cases in Proxmox</h3>
+
+<ul>
+  <li>Automatically assign a static IP, DNS, and hostname</li>
+  <li>Inject SSH public keys for login</li>
+  <li>Set user passwords or disable password logins</li>
+  <li>Run first-boot scripts (like package installs)</li>
+</ul>
+
+<hr />
+
+<h3 id="-how-it-works-in-proxmox">🧱 How It Works in Proxmox</h3>
+
+<ol>
+  <li>
+    <p><strong>Create a Cloud-Init Ready VM Template</strong></p>
+
+    <ul>
+      <li>Use a cloud-ready Linux image (e.g., Ubuntu Cloud, CentOS Cloud, Debian Cloud).</li>
+      <li>Add a cloud-init drive via the Proxmox GUI or CLI.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Convert the VM to a Template</strong></p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm template &lt;vmid&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Clone New VMs from the Template</strong></p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm clone &lt;template-id&gt; &lt;new-vm-id&gt; <span class="nt">--name</span> new-vm-name
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Configure Cloud-Init Parameters</strong>
+In the Proxmox UI (under the VM → <strong>Cloud-Init</strong> tab), or via CLI:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm <span class="nb">set</span> &lt;vmid&gt; <span class="nt">--ciuser</span> vitalie <span class="nt">--sshkey</span> ~/.ssh/id_rsa.pub <span class="se">\</span>
+  <span class="nt">--ipconfig0</span> <span class="nv">ip</span><span class="o">=</span>192.168.1.100/24,gw<span class="o">=</span>192.168.1.1
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Start the VM</strong></p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm start &lt;vmid&gt;
+</code></pre></div>    </div>
+
+    <p><code class="language-plaintext highlighter-rouge">cloud-init</code> runs on boot and configures the VM according to your settings.</p>
+  </li>
+</ol>
+
+<hr />
+
+<h3 id="-requirements">🔧 Requirements</h3>
+
+<ul>
+  <li>The guest OS <strong>must have <code class="language-plaintext highlighter-rouge">cloud-init</code> pre-installed</strong>.</li>
+  <li>The VM should use <strong>VirtIO</strong> disk/network and <strong>serial console</strong> (for easier debug).</li>
+  <li>The Proxmox VM must have a <strong>cloud-init drive</strong> added (<code class="language-plaintext highlighter-rouge">scsciX: cloudinit</code>).</li>
+</ul>
+
+<hr />
+
+<h3 id="-debugging-tips">🔍 Debugging Tips</h3>
+
+<ul>
+  <li>
+    <p>Log into the VM and check logs:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>journalctl <span class="nt">-u</span> cloud-init
+<span class="nb">sudo </span>cloud-init status
+<span class="nb">sudo </span>cloud-init analyze
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<hr />
+
+<p>Here’s a <strong>step-by-step guide</strong> to create a <strong>cloud-init enabled Ubuntu 22.04 template on Proxmox</strong>, which you can use to clone VMs with unique config (IP, hostname, SSH keys, etc.):</p>
+
+<hr />
+
+<h2 id="-prerequisites">🧰 Prerequisites</h2>
+
+<ul>
+  <li>Proxmox VE installed</li>
+  <li>SSH access or console access to Proxmox host</li>
+  <li>A Linux Bridge network in Proxmox (e.g. <code class="language-plaintext highlighter-rouge">vmbr0</code>)</li>
+</ul>
+
+<hr />
+
+<h2 id="-step-by-step-ubuntu-2204-cloud-init-template">✅ Step-by-Step: Ubuntu 22.04 Cloud-Init Template</h2>
+
+<h3 id="1-download-ubuntu-cloud-image"><strong>1. Download Ubuntu Cloud Image</strong></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
+</code></pre></div></div>
+
+<p>You can rename it if you prefer:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mv </span>jammy-server-cloudimg-amd64.img ubuntu-22.04-cloudinit.img
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="2-create-a-new-vm-in-proxmox"><strong>2. Create a New VM in Proxmox</strong></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">VMID</span><span class="o">=</span>9000
+qm create <span class="nv">$VMID</span> <span class="nt">--name</span> ubuntu-2204-cloudinit <span class="se">\</span>
+  <span class="nt">--memory</span> 2048 <span class="nt">--cores</span> 2 <span class="nt">--net0</span> virtio,bridge<span class="o">=</span>vmbr0 <span class="se">\</span>
+  <span class="nt">--ostype</span> l26 <span class="nt">--serial0</span> socket <span class="nt">--vga</span> serial0
+</code></pre></div></div>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">serial0</code> is important for cloud-init console access.</p>
+</blockquote>
+
+<hr />
+
+<h3 id="3-import-the-cloud-image-disk"><strong>3. Import the Cloud Image Disk</strong></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm importdisk <span class="nv">$VMID</span> ubuntu-22.04-cloudinit.img local-lvm
+</code></pre></div></div>
+
+<blockquote>
+  <p>Replace <code class="language-plaintext highlighter-rouge">local-lvm</code> with your storage name if different.</p>
+</blockquote>
+
+<hr />
+
+<h3 id="4-attach-the-disk-to-the-vm"><strong>4. Attach the Disk to the VM</strong></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm <span class="nb">set</span> <span class="nv">$VMID</span> <span class="nt">--scsihw</span> virtio-scsi-pci <span class="nt">--scsi0</span> local-lvm:vm-<span class="nv">$VMID</span><span class="nt">-disk-0</span>
+qm <span class="nb">set</span> <span class="nv">$VMID</span> <span class="nt">--boot</span> c <span class="nt">--bootdisk</span> scsi0
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="5-add-cloud-init-drive"><strong>5. Add Cloud-Init Drive</strong></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm <span class="nb">set</span> <span class="nv">$VMID</span> <span class="nt">--ide2</span> local-lvm:cloudinit
+</code></pre></div></div>
+
+<p>Also set a default serial console:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm <span class="nb">set</span> <span class="nv">$VMID</span> <span class="nt">--serial0</span> socket <span class="nt">--vga</span> serial0
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="6-convert-to-a-template"><strong>6. Convert to a Template</strong></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm template <span class="nv">$VMID</span>
+</code></pre></div></div>
+
+<p>Now this VM is a reusable <strong>cloud-init template</strong>.</p>
+
+<hr />
+
+<h2 id="-deploying-from-the-template">🚀 Deploying from the Template</h2>
+
+<h3 id="1-clone-the-template"><strong>1. Clone the Template</strong></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm clone 9000 101 <span class="nt">--name</span> ubuntu-vm-01
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="2-set-cloud-init-options"><strong>2. Set Cloud-Init Options</strong></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm <span class="nb">set </span>101 <span class="nt">--ciuser</span> vitalie <span class="nt">--sshkey</span> ~/.ssh/id_rsa.pub
+qm <span class="nb">set </span>101 <span class="nt">--ipconfig0</span> <span class="nv">ip</span><span class="o">=</span>192.168.1.101/24,gw<span class="o">=</span>192.168.1.1
+</code></pre></div></div>
+
+<blockquote>
+  <p>You can also do this from Proxmox UI: select the VM → <strong>Cloud-Init</strong> tab.</p>
+</blockquote>
+
+<hr />
+
+<h3 id="3-start-the-vm"><strong>3. Start the VM</strong></h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qm start 101
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="-vm-will-now">✅ VM will now:</h3>
+
+<ul>
+  <li>Set hostname automatically</li>
+  <li>Use static IP or DHCP</li>
+  <li>Inject your SSH key</li>
+  <li>Set login user (e.g., <code class="language-plaintext highlighter-rouge">vitalie</code>)</li>
+</ul>
+
+<hr />
+
+<h2 id="-test-login">🧪 Test Login</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh vitalie@192.168.1.101
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="️-useful-commands-inside-vm">🛠️ Useful Commands Inside VM</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Check cloud-init status</span>
+cloud-init status
+
+<span class="c"># View logs</span>
+journalctl <span class="nt">-u</span> cloud-init
+
+<span class="c"># Analyze boot performance</span>
+cloud-init analyze
+</code></pre></div></div>
+
+<hr />
+

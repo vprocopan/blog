@@ -1,0 +1,134 @@
+<h1 id="run-control-panel-tools-from-the-command-line">Run Control Panel Tools from the Command Line</h1>
+
+<p>This article describes how to launch Windows Control Panel tools by typing commands at a Command Prompt or in the Run dialog (Win + R).</p>
+
+<blockquote>
+  <p><strong>Note:</strong> To run these commands from a Command Prompt, you must be in the Windows system folder. Not all tools may be available on every Windows installation.</p>
+</blockquote>
+
+<h2 id="control-panel-tools">Control Panel Tools</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Tool</th>
+      <th>Command</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Accessibility Options</td>
+      <td><code class="language-plaintext highlighter-rouge">control access.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Add New Hardware</td>
+      <td><code class="language-plaintext highlighter-rouge">control sysdm.cpl add new hardware</code></td>
+    </tr>
+    <tr>
+      <td>Add/Remove Programs</td>
+      <td><code class="language-plaintext highlighter-rouge">control appwiz.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Date/Time Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control timedate.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Display Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control desk.cpl</code></td>
+    </tr>
+    <tr>
+      <td>FindFast</td>
+      <td><code class="language-plaintext highlighter-rouge">control findfast.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Fonts Folder</td>
+      <td><code class="language-plaintext highlighter-rouge">control fonts</code></td>
+    </tr>
+    <tr>
+      <td>Internet Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control inetcpl.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Joystick Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control joy.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Keyboard Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control main.cpl keyboard</code></td>
+    </tr>
+    <tr>
+      <td>Microsoft Exchange (Windows Messaging)</td>
+      <td><code class="language-plaintext highlighter-rouge">control mlcfg32.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Microsoft Mail Post Office</td>
+      <td><code class="language-plaintext highlighter-rouge">control wgpocpl.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Modem Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control modem.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Mouse Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control main.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Multimedia Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control mmsys.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Network Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control netcpl.cpl</code> <br /><em>(NT 4.0: <code class="language-plaintext highlighter-rouge">ncpa.cpl</code>)</em></td>
+    </tr>
+    <tr>
+      <td>Password Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control password.cpl</code></td>
+    </tr>
+    <tr>
+      <td>PC Card (PCMCIA)</td>
+      <td><code class="language-plaintext highlighter-rouge">control main.cpl pc card</code></td>
+    </tr>
+    <tr>
+      <td>Power Management (Windows 95)</td>
+      <td><code class="language-plaintext highlighter-rouge">control main.cpl power</code></td>
+    </tr>
+    <tr>
+      <td>Power Management (Windows 98)</td>
+      <td><code class="language-plaintext highlighter-rouge">control powercfg.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Printers Folder</td>
+      <td><code class="language-plaintext highlighter-rouge">control printers</code></td>
+    </tr>
+    <tr>
+      <td>Regional Settings</td>
+      <td><code class="language-plaintext highlighter-rouge">control intl.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Scanners and Cameras</td>
+      <td><code class="language-plaintext highlighter-rouge">control sticpl.cpl</code></td>
+    </tr>
+    <tr>
+      <td>Sound Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control mmsys.cpl sounds</code></td>
+    </tr>
+    <tr>
+      <td>System Properties</td>
+      <td><code class="language-plaintext highlighter-rouge">control sysdm.cpl</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="usage-examples">Usage Examples</h2>
+
+<p>To launch the Add/Remove Programs tool using <code class="language-plaintext highlighter-rouge">rundll32</code>:</p>
+<pre><code class="language-cmd">rundll32.exe shell32.dll,Control_RunDLL appwiz.cpl
+</code></pre>
+
+<p>To open the Users tool:</p>
+<pre><code class="language-cmd">control ncpa.cpl users
+</code></pre>
+
+<p>On Windows 95/98/Me:</p>
+<pre><code class="language-cmd">control inetcpl.cpl users
+</code></pre>

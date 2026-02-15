@@ -1,0 +1,121 @@
+<p><strong>quick, practical Git basics tutorial</strong> — ideal if you just want to start working productively right away.</p>
+
+<hr />
+
+<h2 id="-1-what-git-is">🧩 1. What Git Is</h2>
+<p>Git is a <strong>version control system</strong> — it tracks changes in code so you can:</p>
+<ul>
+  <li>Revert to previous versions</li>
+  <li>Work in parallel (branches)</li>
+  <li>Collaborate safely</li>
+</ul>
+
+<hr />
+
+<h2 id="️-2-initial-setup">⚙️ 2. Initial Setup</h2>
+<p>Run these once on a new machine:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git config <span class="nt">--global</span> user.name <span class="s2">"Your Name"</span>
+git config <span class="nt">--global</span> user.email <span class="s2">"you@example.com"</span>
+</code></pre></div></div>
+<p>You can check settings with:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git config <span class="nt">--list</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-3-starting-a-repo">📁 3. Starting a Repo</h2>
+<h3 id="create-a-new-repo">Create a new repo</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git init
+</code></pre></div></div>
+
+<h3 id="or-clone-an-existing-one">Or clone an existing one</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/user/repo.git
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="️-4-making-changes">✍️ 4. Making Changes</h2>
+<p>Stage and commit your work:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add <span class="nb">.</span>           <span class="c"># Add all changed files</span>
+git commit <span class="nt">-m</span> <span class="s2">"Describe what you changed"</span>
+</code></pre></div></div>
+
+<p>View your changes:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git status          <span class="c"># See modified/untracked files</span>
+git diff            <span class="c"># Show unstaged changes</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-5-branching--merging">🌿 5. Branching &amp; Merging</h2>
+<p>Create and switch branches:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git branch feature-x       <span class="c"># Create branch</span>
+git checkout feature-x     <span class="c"># Switch to it</span>
+<span class="c"># or shortcut:</span>
+git switch <span class="nt">-c</span> feature-x
+</code></pre></div></div>
+
+<p>Merge changes into main:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout main
+git merge feature-x
+</code></pre></div></div>
+
+<p>Delete branch after merge:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git branch <span class="nt">-d</span> feature-x
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="️-6-working-with-remote">☁️ 6. Working with Remote</h2>
+<p>Push your work:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push origin main
+</code></pre></div></div>
+
+<p>Pull latest updates:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git pull origin main
+</code></pre></div></div>
+
+<p>Add remote manually:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote add origin https://github.com/user/repo.git
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="️-7-undoing-mistakes">🕰️ 7. Undoing Mistakes</h2>
+<p>Undo last commit but keep changes:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git reset <span class="nt">--soft</span> HEAD~1
+</code></pre></div></div>
+
+<p>Discard all uncommitted changes:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout <span class="nt">--</span> <span class="nb">.</span>
+</code></pre></div></div>
+
+<p>Revert a specific commit:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git revert &lt;commit-hash&gt;
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-8-inspecting-history">🔍 8. Inspecting History</h2>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git log <span class="nt">--oneline</span> <span class="nt">--graph</span> <span class="nt">--decorate</span>
+</code></pre></div></div>
+
+<p>See who changed what:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git blame file.txt
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-quick-workflow-summary">🚀 Quick Workflow Summary</h2>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">git pull</code> – update local copy</li>
+  <li><code class="language-plaintext highlighter-rouge">git switch -c feature-branch</code> – create new branch</li>
+  <li>edit files</li>
+  <li><code class="language-plaintext highlighter-rouge">git add .</code></li>
+  <li><code class="language-plaintext highlighter-rouge">git commit -m "message"</code></li>
+  <li><code class="language-plaintext highlighter-rouge">git push origin feature-branch</code></li>
+  <li>open pull request / merge</li>
+</ol>
+
+<hr />

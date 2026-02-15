@@ -1,0 +1,90 @@
+<p>In Kubernetes, <strong><code class="language-plaintext highlighter-rouge">NoSchedule</code></strong> and <strong><code class="language-plaintext highlighter-rouge">NoExecute</code></strong> are two different <strong>taint effects</strong> used to control pod scheduling and eviction:</p>
+
+<hr />
+
+<h3 id="-noschedule">🚫 <code class="language-plaintext highlighter-rouge">NoSchedule</code></h3>
+
+<ul>
+  <li><strong>Meaning</strong>: Pods <strong>will not be scheduled</strong> onto the node <strong>if they do not tolerate the taint</strong>.</li>
+  <li><strong>Already-running pods</strong> are <strong>not affected</strong>.</li>
+  <li><strong>Use case</strong>: Prevent new pods from landing on specific nodes (e.g., dedicated nodes for special workloads).</li>
+</ul>
+
+<p><strong>Example</strong>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">taints</span><span class="pi">:</span>
+<span class="pi">-</span> <span class="na">key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">taint"</span>
+  <span class="na">value</span><span class="pi">:</span> <span class="s2">"</span><span class="s">special"</span>
+  <span class="na">effect</span><span class="pi">:</span> <span class="s2">"</span><span class="s">NoSchedule"</span>
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="-noexecute">❌ <code class="language-plaintext highlighter-rouge">NoExecute</code></h3>
+
+<ul>
+  <li>
+    <p><strong>Meaning</strong>:</p>
+
+    <ol>
+      <li>Pods <strong>will not be scheduled</strong> onto the node (like <code class="language-plaintext highlighter-rouge">NoSchedule</code>).</li>
+      <li><strong>Existing pods</strong> that do not tolerate the taint will be <strong>evicted</strong> from the node.</li>
+    </ol>
+  </li>
+  <li>
+    <p><strong>Use case</strong>: Enforce stricter isolation, e.g., when a node is unhealthy or in maintenance mode.</p>
+  </li>
+</ul>
+
+<p><strong>Example</strong>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">taints</span><span class="pi">:</span>
+<span class="pi">-</span> <span class="na">key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">taint"</span>
+  <span class="na">value</span><span class="pi">:</span> <span class="s2">"</span><span class="s">maintenance"</span>
+  <span class="na">effect</span><span class="pi">:</span> <span class="s2">"</span><span class="s">NoExecute"</span>
+</code></pre></div></div>
+
+<hr />
+
+<h3 id="key-differences">Key Differences</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Behavior</th>
+      <th><code class="language-plaintext highlighter-rouge">NoSchedule</code></th>
+      <th><code class="language-plaintext highlighter-rouge">NoExecute</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Blocks scheduling</td>
+      <td>✅ Yes</td>
+      <td>✅ Yes</td>
+    </tr>
+    <tr>
+      <td>Evicts existing pods</td>
+      <td>❌ No</td>
+      <td>✅ Yes</td>
+    </tr>
+    <tr>
+      <td>Needs toleration to run</td>
+      <td>✅ Yes</td>
+      <td>✅ Yes</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h3 id="toleration-example-to-allow-a-pod-to-stay-on-or-be-scheduled-on-a-tainted-node">Toleration Example (to allow a pod to stay on or be scheduled on a tainted node):</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">tolerations</span><span class="pi">:</span>
+<span class="pi">-</span> <span class="na">key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">taint"</span>
+  <span class="na">operator</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Equal"</span>
+  <span class="na">value</span><span class="pi">:</span> <span class="s2">"</span><span class="s">maintenance"</span>
+  <span class="na">effect</span><span class="pi">:</span> <span class="s2">"</span><span class="s">NoExecute"</span>
+  <span class="na">tolerationSeconds</span><span class="pi">:</span> <span class="m">60</span>  <span class="c1"># pod will be evicted after 60s</span>
+</code></pre></div></div>
+
+<p>Without <code class="language-plaintext highlighter-rouge">tolerationSeconds</code>, the pod will tolerate the taint <strong>indefinitely</strong>.</p>

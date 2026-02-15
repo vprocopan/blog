@@ -1,0 +1,91 @@
+<h1 id="kubernetes-commands-and-syntax-for-cka-exam">Kubernetes Commands and Syntax for CKA Exam</h1>
+
+<p><strong>General Management</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kubectl get [resource]</code>: List resources. For example, <code class="language-plaintext highlighter-rouge">kubectl get pods</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl describe [resource] [name]</code>: Show detailed information about a resource. For example, <code class="language-plaintext highlighter-rouge">kubectl describe pod my-pod</code>.</li>
+</ul>
+
+<p><strong>Creating and Managing Resources</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kubectl create -f [file.yaml]</code>: Create a resource from a YAML file.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl apply -f [file.yaml]</code>: Apply a configuration to a resource from a YAML file.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl delete [resource] [name]</code>: Delete a resource. For example, <code class="language-plaintext highlighter-rouge">kubectl delete pod my-pod</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl edit [resource] [name]</code>: Edit the configuration of a resource.</li>
+</ul>
+
+<p><strong>Namespaces</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kubectl get namespaces</code>: List all namespaces.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl create namespace [name]</code>: Create a new namespace.</li>
+</ul>
+
+<p><strong>Pods</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kubectl run [name] --image=[image]</code>: Run a pod with a specific image.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl exec -it [pod-name] -- [command]</code>: Execute a command in a running pod.</li>
+</ul>
+
+<p><strong>Deployments and Replicas</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kubectl scale deployment [deployment-name] --replicas=[number]</code>: Scale a deployment to the specified number of replicas.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl rollout status deployment/[deployment-name]</code>: Get the rollout status of a deployment.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl rollout undo deployment/[deployment-name]</code>: Rollback to the previous deployment.</li>
+</ul>
+
+<p><strong>Services</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kubectl expose deployment [deployment-name] --type=[type] --port=[port]</code>: Expose a deployment as a new Kubernetes service.</li>
+</ul>
+
+<p><strong>Logs and Debugging</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kubectl logs [pod-name]</code>: Fetch the logs of a pod.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl logs -f [pod-name]</code>: Stream the logs of a pod.</li>
+</ul>
+
+<p><strong>Node Management</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kubectl get nodes</code>: List all nodes in the cluster.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl cordon [node-name]</code>: Mark node as unschedulable.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl drain [node-name]</code>: Drain node in preparation for maintenance.</li>
+</ul>
+
+<p><strong>Resource Inspection</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kubectl top pod</code>: Display metrics for pods.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl top node</code>: Display metrics for nodes.</li>
+</ul>
+
+<p><strong>Configuration</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">kubectl config view</code>: View Kubernetes configuration.</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl config use-context [context-name]</code>: Switch to a different cluster context.</li>
+</ul>
+
+<p><strong><em>kubectl Cheat Sheet</em></strong></p>
+
+<ul>
+  <li>Kubernetes has an official <code class="language-plaintext highlighter-rouge">kubectl</code> cheat sheet which is an invaluable resource: <a href="https://kubernetes.io/docs/reference/kubectl/quick-reference/">https://kubernetes.io/docs/reference/kubectl/cheatsheet/</a></li>
+</ul>
+
+<h1 id="tips-for-using-kubectl-commands">Tips for Using kubectl Commands</h1>
+
+<ul>
+  <li><strong>Understand Contexts:</strong> Know how to switch contexts if you’re working with multiple clusters.</li>
+  <li><strong>Use YAML Files for Complex Configurations:</strong> While imperative commands are useful, declarative configurations using YAML are more consistent and repeatable.</li>
+  <li><strong>Explore kubectl Autocomplete:</strong> It can significantly speed up command entry.</li>
+  <li><strong>Remember Selectors:</strong> They are powerful for filtering results, especially with <code class="language-plaintext highlighter-rouge">get</code> commands.</li>
+</ul>
+
+<p><strong><em>This cheat sheet covers the fundamental concepts and commands that are essential for the CKA exam and day-to-day Kubernetes administration. Remember, hands-on practice and familiarity with the official Kubernetes documentation are key to success in the CKA exam.</em></strong></p>

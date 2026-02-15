@@ -1,0 +1,84 @@
+<h3 id="-what-is-ebpf">🧠 What is eBPF?</h3>
+
+<p><strong>eBPF (extended Berkeley Packet Filter)</strong> is a powerful Linux kernel technology that allows <strong>safe, sandboxed programs to run inside the kernel</strong> — without modifying kernel code or loading unsafe modules.</p>
+
+<p>It effectively allows you to:</p>
+
+<blockquote>
+  <p>🔍 <strong>Observe, control, and optimize</strong> kernel-level behavior <strong>dynamically</strong> and <strong>safely</strong>.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="-what-ebpf-can-do">🔧 What eBPF Can Do</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Use Case</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>🔎 <strong>Observability</strong></td>
+      <td>Track network calls, CPU/memory usage, syscall latencies</td>
+    </tr>
+    <tr>
+      <td>🔒 <strong>Security</strong></td>
+      <td>Monitor or block suspicious system calls, container activity</td>
+    </tr>
+    <tr>
+      <td>🌐 <strong>Networking</strong></td>
+      <td>Build firewalls, traffic shaping, load balancers (e.g. Cilium)</td>
+    </tr>
+    <tr>
+      <td>⚙️ <strong>Profiling</strong></td>
+      <td>Live CPU flamegraphs, stack traces, I/O bottlenecks</td>
+    </tr>
+    <tr>
+      <td>🧪 <strong>Tracing</strong></td>
+      <td>Distributed tracing with low overhead (e.g. Coroot, Pixie)</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="-how-it-works-simplified">📦 How It Works (Simplified)</h2>
+
+<ol>
+  <li><strong>You write a tiny program</strong> (in C or use a tool like bpftrace).</li>
+  <li>It’s <strong>compiled into eBPF bytecode</strong>.</li>
+  <li>The kernel <strong>verifies</strong> the code (ensures it’s safe).</li>
+  <li>It’s <strong>loaded into the kernel</strong> and hooked to an event (e.g., network packet, syscall, tracepoint).</li>
+  <li>It runs in a sandboxed VM <strong>inside the kernel</strong> with near-zero overhead.</li>
+</ol>
+
+<hr />
+
+<h2 id="-why-its-safe">🔐 Why It’s Safe</h2>
+
+<ul>
+  <li>eBPF code is <strong>verified</strong> before execution.</li>
+  <li>It runs in a <strong>sandbox</strong> (no memory access outside bounds).</li>
+  <li>It <strong>cannot crash the kernel</strong>.</li>
+</ul>
+
+<hr />
+
+<h2 id="-ebpf-power-examples">🔥 eBPF Power Examples</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">bcc</code> / <code class="language-plaintext highlighter-rouge">bpftrace</code> → Observe kernel-level events (like strace++ on steroids)</li>
+  <li><strong>Pixie</strong> / <strong>Coroot</strong> → Use eBPF to trace services and monitor latency without instrumenting code</li>
+  <li><strong>Cilium</strong> → An eBPF-powered networking and security layer for Kubernetes</li>
+</ul>
+
+<hr />
+
+<h2 id="-summary">📌 Summary</h2>
+
+<blockquote>
+  <p><strong>eBPF = kernel superpower</strong> for visibility, security, and performance — used by modern tools like Coroot, Pixie, Cilium, and more.</p>
+</blockquote>

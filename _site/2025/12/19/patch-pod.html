@@ -1,0 +1,8 @@
+
+<h2 id="remove-probes-at-runtime">Remove probes at runtime</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl patch deploy pihole <span class="nt">-n</span> pihole <span class="nt">--type</span> json <span class="nt">-p</span><span class="o">=</span><span class="s1">'[
+  {"op":"remove","path":"/spec/template/spec/containers/0/livenessProbe"},
+  {"op":"remove","path":"/spec/template/spec/containers/0/readinessProbe"}
+]'</span>
+</code></pre></div></div>

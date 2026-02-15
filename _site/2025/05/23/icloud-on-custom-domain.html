@@ -1,0 +1,69 @@
+<h1 id="set-up-two-personalized-icloud-email-addresses-with-a-custom-domain-via-cloudflare">Set Up Two Personalized iCloud Email Addresses with a Custom Domain via Cloudflare</h1>
+
+<p>To use a custom domain with two personalized iCloud email addresses, you’ll need an active <strong>iCloud+ subscription</strong>. You can use a domain you already own (e.g., via Cloudflare) and configure it for Apple Mail.</p>
+
+<hr />
+
+<h2 id="-1-subscribe-to-icloud">🔑 1. Subscribe to iCloud+</h2>
+
+<p>You’ll need an <strong>active iCloud+</strong> subscription to use custom email domains.</p>
+
+<hr />
+
+<h2 id="-2-add-your-domain-to-icloud-mail">📨 2. Add Your Domain to iCloud Mail</h2>
+
+<ol>
+  <li>Go to <a href="https://icloud.com/icloudplus">icloud.com/icloudplus</a> and sign in to your Apple ID.</li>
+  <li>Click <strong>Custom Email Domain</strong> in the toolbar.</li>
+  <li>Follow the on-screen instructions to <strong>add your domain</strong>.</li>
+</ol>
+
+<hr />
+
+<h2 id="-3-configure-dns-records-in-cloudflare">🌐 3. Configure DNS Records in Cloudflare</h2>
+
+<ol>
+  <li>Log in to your <a href="https://dash.cloudflare.com">Cloudflare dashboard</a>.</li>
+  <li>Select your domain and go to the <strong>DNS</strong> settings.</li>
+  <li>Add the DNS records Apple provides, such as:
+    <ul>
+      <li><strong>MX Records</strong>:
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">mx01.mail.icloud.com</code></li>
+          <li><code class="language-plaintext highlighter-rouge">mx02.mail.icloud.com</code></li>
+        </ul>
+      </li>
+      <li><strong>TXT, SPF, DKIM, and CNAME</strong> records for verification and email security.</li>
+    </ul>
+  </li>
+  <li>Make sure <strong>proxy status</strong> is set to <strong>“DNS only”</strong> (⚠️ no Cloudflare proxy) for all Apple-related mail records.</li>
+</ol>
+
+<hr />
+
+<h2 id="-4-create-personalized-email-addresses">👤 4. Create Personalized Email Addresses</h2>
+
+<p>Once DNS is verified:</p>
+
+<ul>
+  <li>You can create up to <strong>three</strong> personalized email addresses per domain (e.g., <code class="language-plaintext highlighter-rouge">yourname@yourdomain.com</code>).</li>
+  <li>Set these up directly in the <strong>iCloud Mail dashboard</strong>.</li>
+</ul>
+
+<hr />
+
+<h2 id="-5-set-up-mail-on-apple-devices">📱 5. Set Up Mail on Apple Devices</h2>
+
+<ol>
+  <li>On your <strong>iPhone, iPad, or Mac</strong>, go to:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Settings</code> &gt; <strong>[Your Name]</strong> &gt; <strong>iCloud</strong> &gt; <strong>Custom Email Domain</strong></li>
+    </ul>
+  </li>
+  <li>Follow the instructions to <strong>add and activate your personalized addresses</strong>.</li>
+  <li>Use the addresses in the <strong>Mail app</strong> on any Apple device signed into your iCloud account.</li>
+</ol>
+
+<hr />
+
+<p>✅ Done! Your domain is now configured to send and receive email through iCloud Mail using your custom addresses.</p>

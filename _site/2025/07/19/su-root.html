@@ -1,0 +1,242 @@
+<p>Let’s clearly compare the difference between:</p>
+
+<h3 id="-su-root">🔸 <code class="language-plaintext highlighter-rouge">su root</code></h3>
+<p>vs</p>
+<h3 id="-su---which-is-shorthand-for-su---root">🔸 <code class="language-plaintext highlighter-rouge">su -</code> (which is shorthand for <code class="language-plaintext highlighter-rouge">su - root</code>)</h3>
+
+<hr />
+
+<h3 id="-su-root-1">📌 <code class="language-plaintext highlighter-rouge">su root</code></h3>
+
+<ul>
+  <li><strong>Switches user</strong>: to <code class="language-plaintext highlighter-rouge">root</code></li>
+  <li><strong>Keeps your current shell environment</strong>
+    <ul>
+      <li>Your <code class="language-plaintext highlighter-rouge">$PATH</code>, <code class="language-plaintext highlighter-rouge">$HOME</code>, <code class="language-plaintext highlighter-rouge">$USER</code>, etc., are mostly unchanged</li>
+    </ul>
+  </li>
+  <li><strong>Does not simulate a full login</strong></li>
+  <li><strong>You remain in the same working directory</strong></li>
+</ul>
+
+<h4 id="-example">🔍 Example:</h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">whoami
+</span>user
+
+<span class="nv">$ </span>su root
+Password:
+<span class="c"># whoami</span>
+root
+<span class="c"># echo $HOME</span>
+/home/user
+</code></pre></div></div>
+
+<p>💡 You’re <code class="language-plaintext highlighter-rouge">root</code>, but using your regular user’s environment.</p>
+
+<hr />
+
+<h3 id="-su---or-su---root">📌 <code class="language-plaintext highlighter-rouge">su -</code> (or <code class="language-plaintext highlighter-rouge">su - root</code>)</h3>
+
+<ul>
+  <li><strong>Switches user</strong>: to <code class="language-plaintext highlighter-rouge">root</code></li>
+  <li><strong>Starts a <em>login shell</em></strong> for root
+    <ul>
+      <li>Loads root’s <code class="language-plaintext highlighter-rouge">.bash_profile</code>, <code class="language-plaintext highlighter-rouge">.profile</code>, etc.</li>
+      <li>Changes <code class="language-plaintext highlighter-rouge">$HOME</code> to <code class="language-plaintext highlighter-rouge">/root</code>, <code class="language-plaintext highlighter-rouge">$USER</code> to <code class="language-plaintext highlighter-rouge">root</code>, etc.</li>
+      <li>Updates <code class="language-plaintext highlighter-rouge">$PATH</code> to root’s path</li>
+    </ul>
+  </li>
+  <li><strong>Changes directory</strong> to <code class="language-plaintext highlighter-rouge">/root</code></li>
+</ul>
+
+<h4 id="-example-1">🔍 Example:</h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">whoami
+</span>user
+
+<span class="nv">$ </span>su -
+Password:
+<span class="c"># whoami</span>
+root
+<span class="c"># echo $HOME</span>
+/root
+</code></pre></div></div>
+
+<p>💡 You’re <code class="language-plaintext highlighter-rouge">root</code>, <strong>and</strong> using root’s proper environment.</p>
+
+<hr />
+
+<h3 id="-summary-table">✅ Summary Table</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th><code class="language-plaintext highlighter-rouge">su root</code></th>
+      <th><code class="language-plaintext highlighter-rouge">su -</code> / <code class="language-plaintext highlighter-rouge">su - root</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Switches to root?</td>
+      <td>✅ Yes</td>
+      <td>✅ Yes</td>
+    </tr>
+    <tr>
+      <td>Loads root’s environment?</td>
+      <td>❌ No</td>
+      <td>✅ Yes</td>
+    </tr>
+    <tr>
+      <td>Changes <code class="language-plaintext highlighter-rouge">$HOME</code> to <code class="language-plaintext highlighter-rouge">/root</code>?</td>
+      <td>❌ No</td>
+      <td>✅ Yes</td>
+    </tr>
+    <tr>
+      <td>Changes <code class="language-plaintext highlighter-rouge">$PATH</code>?</td>
+      <td>❌ No (may miss <code class="language-plaintext highlighter-rouge">/sbin</code>)</td>
+      <td>✅ Yes (includes <code class="language-plaintext highlighter-rouge">/sbin</code>, etc.)</td>
+    </tr>
+    <tr>
+      <td>Starts login shell?</td>
+      <td>❌ No</td>
+      <td>✅ Yes</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h3 id="-when-to-use-which">🧠 When to Use Which?</h3>
+
+<ul>
+  <li><strong>Use <code class="language-plaintext highlighter-rouge">su root</code></strong>: when you just need root temporarily without changing your environment.</li>
+  <li><strong>Use <code class="language-plaintext highlighter-rouge">su -</code></strong>: when running root tasks that depend on environment variables, root’s <code class="language-plaintext highlighter-rouge">.bashrc</code>, or access to <code class="language-plaintext highlighter-rouge">/sbin</code>, etc.</li>
+</ul>
+
+<hr />
+
+<h2 id="-su---vs-sudo--i">🧪 <code class="language-plaintext highlighter-rouge">su -</code> vs <code class="language-plaintext highlighter-rouge">sudo -i</code></h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Command</th>
+      <th>Meaning</th>
+      <th>Key Differences</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">su -</code></td>
+      <td>Switch to root <strong>login shell</strong></td>
+      <td>Requires <strong>root password</strong></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">sudo -i</code></td>
+      <td>Run an <strong>interactive login shell</strong> as root</td>
+      <td>Uses <strong>your password</strong> (with sudo rights)</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h3 id="-1-su---substitute-user">🔍 1. <code class="language-plaintext highlighter-rouge">su -</code> (Substitute User)</h3>
+
+<ul>
+  <li>
+    <p>Starts a <strong>new login shell</strong> as root (like logging in directly).</p>
+  </li>
+  <li>
+    <p>Loads <strong>root’s environment</strong>, <code class="language-plaintext highlighter-rouge">.bashrc</code>, <code class="language-plaintext highlighter-rouge">.profile</code>, etc.</p>
+  </li>
+  <li>
+    <p>You must know <strong>root’s password</strong>.</p>
+  </li>
+  <li>
+    <p>Syntax:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  su -            <span class="c"># become root</span>
+  su - otheruser  <span class="c"># become another user</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<hr />
+
+<h3 id="-2-sudo--i-sudo-interactive-shell">🔍 2. <code class="language-plaintext highlighter-rouge">sudo -i</code> (Sudo Interactive Shell)</h3>
+
+<ul>
+  <li>
+    <p>Simulates a <strong>login shell as root</strong> using <strong>your user’s sudo privileges</strong>.</p>
+  </li>
+  <li>
+    <p>Loads root’s environment like <code class="language-plaintext highlighter-rouge">su -</code>.</p>
+  </li>
+  <li>
+    <p>Uses <strong>your password</strong>, not root’s.</p>
+  </li>
+  <li>
+    <p>Requires you to be in <code class="language-plaintext highlighter-rouge">sudoers</code>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h3 id="-summary">✅ Summary</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th><code class="language-plaintext highlighter-rouge">su -</code></th>
+      <th><code class="language-plaintext highlighter-rouge">sudo -i</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Requires root password</td>
+      <td>✅ Yes</td>
+      <td>❌ No</td>
+    </tr>
+    <tr>
+      <td>Uses sudo</td>
+      <td>❌ No</td>
+      <td>✅ Yes</td>
+    </tr>
+    <tr>
+      <td>Loads root env</td>
+      <td>✅ Yes</td>
+      <td>✅ Yes</td>
+    </tr>
+    <tr>
+      <td>Safer audit/logging</td>
+      <td>❌ Minimal</td>
+      <td>✅ Logged</td>
+    </tr>
+    <tr>
+      <td>Recommended for sudo-based systems (Ubuntu, etc.)</td>
+      <td>❌ Not really</td>
+      <td>✅ Yes</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h3 id="️-which-should-you-use">🛡️ Which Should You Use?</h3>
+
+<ul>
+  <li>
+    <p>On <strong>Ubuntu</strong> and other sudo-based systems: prefer <code class="language-plaintext highlighter-rouge">**sudo -i**</code></p>
+  </li>
+  <li>
+    <p>On <strong>older systems</strong> or when root password is known: <code class="language-plaintext highlighter-rouge">**su -**</code> is fine</p>
+  </li>
+  <li>
+    <p>For <strong>audit and logging</strong>: <code class="language-plaintext highlighter-rouge">sudo -i</code> is better (it logs who switched to root)</p>
+  </li>
+</ul>
+
+<hr />
+

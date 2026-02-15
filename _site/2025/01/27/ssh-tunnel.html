@@ -1,0 +1,39 @@
+<p>To tunnel port 5601 (often used by Kibana) from a remote server to your localhost, you can use SSH port forwarding. Here’s how you can do it:</p>
+
+<p><strong>Command Syntax</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh -L [LOCAL_PORT]:[REMOTE_HOST]:[REMOTE_PORT] [USER]@[REMOTE_SERVER]
+</code></pre></div></div>
+
+<p><strong>Specific Example for Kibana</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh -L 5601:127.0.0.1:5601 your-username@remote-server
+</code></pre></div></div>
+
+<p><strong>Explanation</strong></p>
+
+<ol>
+  <li>
+    <p>-L: Specifies the local port forwarding.</p>
+  </li>
+  <li>
+    <p>5601:127.0.0.1:5601:</p>
+  </li>
+</ol>
+
+<p>• 5601 (before :): The port on your localhost where you’ll access the service.</p>
+
+<p>• 127.0.0.1:5601 (after :): The address and port of the service on the remote server.</p>
+
+<ol>
+  <li>
+    <p>your-username: Replace with your username for the remote server.</p>
+  </li>
+  <li>
+    <p>remote-server: Replace with the remote server’s IP or domain.</p>
+  </li>
+</ol>
+
+<p><strong>Usage</strong></p>
+
+<p>After running the command, you can open http://localhost:5601 in your browser to access Kibana (or the service running on port 5601).</p>

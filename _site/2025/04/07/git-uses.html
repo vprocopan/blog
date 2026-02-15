@@ -1,0 +1,102 @@
+<h1 id="git-use-cases-and-documentation">Git Use Cases and Documentation</h1>
+
+<h2 id="introduction">Introduction</h2>
+<p>Git is a distributed version control system widely used for tracking changes in source code during software development. Below are some common use cases and their corresponding commands.</p>
+
+<hr />
+
+<h2 id="use-cases">Use Cases</h2>
+
+<h3 id="1-version-control">1. <strong>Version Control</strong></h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Track changes in your project files.
+- Revert to previous versions if needed.
+
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+```
+</code></pre></div></div>
+
+<h3 id="2-collaboration">2. <strong>Collaboration</strong></h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Work with multiple developers on the same project.
+- Merge changes from different branches.
+
+```bash
+git clone &lt;repository-url&gt;
+git pull origin main
+git push origin main
+```
+</code></pre></div></div>
+
+<h3 id="3-branching">3. <strong>Branching</strong></h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Create separate branches for new features or bug fixes.
+- Merge branches when the work is complete.
+
+```bash
+git branch feature-branch
+git checkout feature-branch
+git merge feature-branch
+```
+</code></pre></div></div>
+
+<h3 id="4-code-review">4. <strong>Code Review</strong></h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Use pull requests to review and discuss code changes before merging.
+
+```bash
+git checkout -b feature-branch
+git push origin feature-branch
+```
+</code></pre></div></div>
+
+<h3 id="5-undo-changes">5. <strong>Undo Changes</strong></h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Revert changes or reset to a previous commit.
+
+```bash
+git checkout -- &lt;file&gt;
+git reset --hard &lt;commit-hash&gt;
+```
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="common-commands">Common Commands</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Command</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">git status</code></td>
+      <td>Check the status of your working directory.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">git log</code></td>
+      <td>View commit history.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">git diff</code></td>
+      <td>Show changes between commits or branches.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">git stash</code></td>
+      <td>Temporarily save changes.</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">git remote -v</code></td>
+      <td>View remote repository details.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="resources">Resources</h2>
+<ul>
+  <li><a href="https://git-scm.com/doc">Git Documentation</a></li>
+  <li><a href="https://git-scm.com/book/en/v2">Pro Git Book</a></li>
+</ul>

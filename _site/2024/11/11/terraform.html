@@ -1,0 +1,56 @@
+<h1 id="terraform-project-structure">Terraform Project Structure</h1>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>blog/
+├── environments/
+│   ├── dev/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── provider.tf
+│   │   ├── outputs.tf
+│   │   └── dev.tfvars
+│   ├── staging/
+│   │   └──  (same files as dev)
+│   └── prod/
+│       └──  (same files as dev)
+└── modules/
+    ├── network/
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    ├── compute/
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    └── data/
+        ├── main.tf
+        ├── variables.tf
+        └── outputs.tf
+</code></pre></div></div>
+
+<h2 id="folder-details">Folder Details</h2>
+
+<ul>
+  <li><strong>environments/</strong>: Contains separate configurations for each environment:
+    <ul>
+      <li><strong>dev/</strong>: Development setup with <code class="language-plaintext highlighter-rouge">main.tf</code>, <code class="language-plaintext highlighter-rouge">variables.tf</code>, <code class="language-plaintext highlighter-rouge">provider.tf</code>, <code class="language-plaintext highlighter-rouge">outputs.tf</code>, and <code class="language-plaintext highlighter-rouge">dev.tfvars</code>.</li>
+      <li><strong>staging/</strong>: Staging setup, mirroring the dev folder with its own variable files.</li>
+      <li><strong>prod/</strong>: Production setup, structured like dev and staging but with production values.</li>
+    </ul>
+  </li>
+  <li><strong>modules/</strong>: Reusable Terraform modules:
+    <ul>
+      <li><strong>network/</strong>: Defines networking resources (VPCs, subnets) via <code class="language-plaintext highlighter-rouge">main.tf</code>, <code class="language-plaintext highlighter-rouge">variables.tf</code>, and <code class="language-plaintext highlighter-rouge">outputs.tf</code>.</li>
+      <li><strong>compute/</strong>: Manages compute resources (instances), with module inputs and outputs.</li>
+      <li><strong>data/</strong>: Handles data resources (e.g., S3 buckets) through dedicated module files.</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="purpose-and-best-practices">Purpose and Best Practices</h2>
+
+<ul>
+  <li><strong>Environment Folders</strong>: Separate configs for <code class="language-plaintext highlighter-rouge">dev</code>, <code class="language-plaintext highlighter-rouge">staging</code>, and <code class="language-plaintext highlighter-rouge">prod</code> allow isolated changes per environment.</li>
+  <li><strong>Reusable Modules</strong>: Centralize common infrastructure (network, compute, data) to avoid duplication and ensure consistency.</li>
+  <li><strong>Scalability</strong>: This layout supports adding new environments or modules without affecting existing code.</li>
+  <li><strong>Maintainability</strong>: Clear separation of concerns makes it easier to update variables, providers, and outputs independently.</li>
+</ul>

@@ -1,0 +1,125 @@
+<p>Hosting a blog with <strong>Jekyll</strong> using <strong>GitHub Actions</strong> is a powerful way to automate your static site deployment to GitHub Pages. Here’s a <strong>step-by-step guide</strong> to help you do just that.</p>
+
+<hr />
+
+<h2 id="-prerequisites">✅ Prerequisites</h2>
+
+<ol>
+  <li><strong>GitHub repository</strong> (<code class="language-plaintext highlighter-rouge">&lt;your-username&gt;/&lt;your-repo&gt;</code>)</li>
+  <li><strong>Jekyll blog</strong> source code (use <code class="language-plaintext highlighter-rouge">jekyll new</code> or clone an existing theme)</li>
+  <li><strong>GitHub Pages</strong> enabled in the repository settings</li>
+  <li>Optional: A <strong>custom domain</strong> set up via DNS</li>
+</ol>
+
+<hr />
+
+<h2 id="-directory-structure">🧱 Directory Structure</h2>
+
+<p>Make sure your repo has the Jekyll site source in the root or a specific folder (<code class="language-plaintext highlighter-rouge">src</code>, etc.):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">.</span>
+├── _config.yml
+├── _posts/
+├── index.md
+├── ...
+└── .github/
+    └── workflows/
+        └── jekyll.yml
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="️-github-actions-workflow">⚙️ GitHub Actions Workflow</h2>
+
+<p>Create <code class="language-plaintext highlighter-rouge">.github/workflows/jekyll.yml</code> with this content:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Build and Deploy Jekyll Blog</span>
+
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">main</span>  <span class="c1"># or 'master' if that's your default</span>
+
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">build</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Checkout Repository</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v4</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Setup Ruby</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">ruby/setup-ruby@v1</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">ruby-version</span><span class="pi">:</span> <span class="m">3.1</span>  <span class="c1"># or your desired version</span>
+          <span class="na">bundler-cache</span><span class="pi">:</span> <span class="kc">true</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Install Dependencies</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="pi">|</span>
+          <span class="s">gem install bundler</span>
+          <span class="s">bundle install</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Build Site</span>
+        <span class="na">run</span><span class="pi">:</span> <span class="s">bundle exec jekyll build</span>
+
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Deploy to GitHub Pages</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">peaceiris/actions-gh-pages@v4</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">github_token</span><span class="pi">:</span> <span class="s">$</span>
+          <span class="na">publish_dir</span><span class="pi">:</span> <span class="s">./_site</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-gemfile">📦 Gemfile</h2>
+
+<p>Make sure you have the necessary dependencies in your <code class="language-plaintext highlighter-rouge">Gemfile</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">source</span> <span class="s2">"https://rubygems.org"</span>
+<span class="n">gem</span> <span class="s2">"jekyll"</span>
+<span class="n">gem</span> <span class="s2">"github-pages"</span><span class="p">,</span> <span class="ss">group: :jekyll_plugins</span>
+</code></pre></div></div>
+
+<p>Then run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle <span class="nb">install</span>
+</code></pre></div></div>
+
+<p>Commit the <code class="language-plaintext highlighter-rouge">Gemfile.lock</code>.</p>
+
+<hr />
+
+<h2 id="-github-pages-settings">🌐 GitHub Pages Settings</h2>
+
+<ol>
+  <li>Go to your repo: <strong>Settings → Pages</strong></li>
+  <li>Source: Select <code class="language-plaintext highlighter-rouge">GitHub Actions</code> as the build and deployment method</li>
+</ol>
+
+<hr />
+
+<h2 id="-optional-use-a-custom-domain">🌍 Optional: Use a Custom Domain</h2>
+
+<p>If using a custom domain:</p>
+
+<ul>
+  <li>Create a <code class="language-plaintext highlighter-rouge">CNAME</code> file in the root of your repo with your domain name.</li>
+  <li>Ensure DNS is pointed to GitHub Pages servers (e.g., <code class="language-plaintext highlighter-rouge">yourusername.github.io</code> CNAME or A records).</li>
+</ul>
+
+<hr />
+
+<h2 id="-test-locally">🧪 Test Locally</h2>
+
+<p>Before pushing, run locally:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle <span class="nb">exec </span>jekyll serve
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-push-and-watch">🚀 Push and Watch</h2>
+
+<p>Push to the <code class="language-plaintext highlighter-rouge">main</code> branch and watch the Actions tab for your deployment to go live.</p>
+
+<hr />

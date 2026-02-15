@@ -1,0 +1,156 @@
+<p>If you want a minimal Ubuntu setup just to run an NFS server. Here’s how you can quickly set that up on a VM or bare metal:</p>
+
+<p>⸻</p>
+
+<p>Step 1: Install Ubuntu Server (minimal)
+	•	Download Ubuntu Server ISO from ubuntu.com
+	•	Install with default settings, no GUI, minimal install.</p>
+
+<p>⸻</p>
+
+<p>Step 2: Install NFS server</p>
+
+<p>Log in to your Ubuntu machine, then:</p>
+
+<p>sudo apt update
+sudo apt install nfs-kernel-server</p>
+
+<p>⸻</p>
+
+<p>Step 3: Prepare export directory</p>
+
+<p>Choose or create the folder you want to share, e.g., /srv/nfs:</p>
+
+<p>sudo mkdir -p /srv/nfs
+sudo chown nobody:nogroup /srv/nfs
+sudo chmod 755 /srv/nfs</p>
+
+<p>Put your files (or ISO, whatever) inside /srv/nfs.</p>
+
+<p>⸻</p>
+
+<p>Step 4: Configure NFS exports</p>
+
+<p>Edit /etc/exports:</p>
+
+<p>sudo nano /etc/exports</p>
+
+<p>Add a line like this to share /srv/nfs to your local network (replace with your subnet):</p>
+
+<p>/srv/nfs 192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash)</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>•	rw = read/write access
+•	sync = write changes immediately
+•	no_root_squash = clients can access as root (optional, use with care)
+</code></pre></div></div>
+
+<p>Save and exit.</p>
+
+<p>⸻</p>
+
+<p>Step 5: Apply export rules</p>
+
+<p>sudo exportfs -ra</p>
+
+<p>⸻</p>
+
+<p>Step 6: Start and enable NFS server</p>
+
+<p>sudo systemctl restart nfs-kernel-server
+sudo systemctl enable nfs-kernel-server</p>
+
+<p>⸻</p>
+
+<p>Step 7: Firewall (if enabled)</p>
+
+<p>Allow NFS ports:</p>
+
+<p>sudo ufw allow from 192.168.1.0/24 to any port nfs</p>
+
+<p>⸻</p>
+
+<p>Now your Ubuntu NFS server is ready.</p>
+
+<p>Clients on the specified subnet can mount the share like:</p>
+
+<p>sudo mount your.nfs.server.ip:/srv/nfs /mnt</p>
+
+<p>⸻</p>
+
+<p>If You want to mount an external NFS share inside your Kubernetes cluster so your pods can use it as persistent storage.</p>
+
+<p>Here’s a simple way to do it:</p>
+
+<p>⸻</p>
+
+<p>Step 1: Create a PersistentVolume (PV) for the NFS share</p>
+
+<p>Replace your.nfs.server.ip with your actual NFS server IP or hostname.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv
+spec:
+  capacity:
+    storage: 100Gi      # Set this according to your NFS share size or quota
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: your.nfs.server.ip
+    path: /srv/nfs       # The exported directory on the NFS server
+</code></pre></div></div>
+
+<p>⸻</p>
+
+<p>Step 2: Create a PersistentVolumeClaim (PVC) to request the storage</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+</code></pre></div></div>
+
+<p>⸻</p>
+
+<p>Step 3: Use the PVC in your Pod or Deployment</p>
+
+<p>Example Pod manifest using the PVC:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: nfs-client
+spec:
+  containers:
+    - name: app
+      image: busybox
+      command: [ "sleep", "3600" ]
+      volumeMounts:
+        - name: nfs-storage
+          mountPath: /mnt/nfs
+  volumes:
+    - name: nfs-storage
+      persistentVolumeClaim:
+        claimName: nfs-pvc
+</code></pre></div></div>
+
+<p>⸻</p>
+
+<p>Notes:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>•	Make sure your NFS server allows connections from your Kubernetes nodes (firewall, export permissions).
+ 
+•	ReadWriteMany access mode allows multiple pods to mount the volume simultaneously.
+ 
+•	You might want to adjust storage sizes in PV and PVC to fit your needs.
+ 
+•	If your NFS server hostname isn’t resolvable in your cluster, use the IP address.
+</code></pre></div></div>
+
+<p>⸻</p>
+

@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
-# Use the github-pages gem to match GitHub Pages environment
-gem "github-pages", group: :jekyll_plugins
+# Local development stack (avoids hard dependency on github-pages gem)
+gem "jekyll", "~> 4.4"
 
 # Optional: You can keep minima if you're customizing it manually,
 # but GitHub Pages already includes it by default.
@@ -9,8 +9,6 @@ gem "github-pages", group: :jekyll_plugins
 gem "minima", "~> 2.5"
 
 group :jekyll_plugins do
-  # Optional: github-pages already includes jekyll-feed,
-  # but you can keep it if you want to explicitly include it
   gem "jekyll-feed", "~> 0.12"
   # Add any custom plugins here
   # gem "jekyll-seo-tag"

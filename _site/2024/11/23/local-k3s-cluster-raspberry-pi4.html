@@ -1,0 +1,519 @@
+<p>how to make k3s home cluster with 4 nodes on raspberry pi4</p>
+
+<p>Setting up a <strong>K3s home cluster</strong> with 4 nodes on Raspberry Pi 4 can provide you with a lightweight Kubernetes cluster for experimentation or personal use. Below is a step-by-step guide:</p>
+
+<p><strong>Prerequisites</strong></p>
+
+<ol>
+  <li><strong>Hardware:</strong></li>
+</ol>
+
+<p>• 4 Raspberry Pi 4 boards with at least 2GB of RAM each.</p>
+
+<p>• microSD cards (16GB or more for each Raspberry Pi).</p>
+
+<p>• Power supply and network connectivity (Ethernet is preferred).</p>
+
+<ol>
+  <li><strong>Operating System:</strong></li>
+</ol>
+
+<p>• Use a 64-bit OS like Raspberry Pi OS Lite (64-bit) or Ubuntu Server 22.04 for ARM.</p>
+
+<ol>
+  <li><strong>Networking:</strong></li>
+</ol>
+
+<p>• Static IPs or DHCP reservations for each Raspberry Pi.</p>
+
+<p>• Hostnames assigned (e.g., k3s-master, k3s-node1, k3s-node2, k3s-node3).</p>
+
+<ol>
+  <li><strong>Prepare the System:</strong></li>
+</ol>
+
+<p>• Update each Raspberry Pi:</p>
+
+<p>sudo apt update &amp;&amp; sudo apt upgrade -y</p>
+
+<p>• Install curl and iptables (if not already installed):</p>
+
+<p>sudo apt install -y curl iptables</p>
+
+<ol>
+  <li><strong>SSH Access:</strong></li>
+</ol>
+
+<p>• Ensure SSH is enabled for remote management.</p>
+
+<p><strong>Step 1: Install K3s on the Master Node</strong></p>
+
+<ol>
+  <li>
+    <p><strong>Choose the Master Node:</strong> Assign one Raspberry Pi as the control plane node.</p>
+  </li>
+  <li>
+    <p><strong>Install K3s (Master):</strong></p>
+  </li>
+</ol>
+
+<p>Run the following command to install K3s on the master node:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>curl -sfL https://get.k3s.io</td>
+      <td>INSTALL_K3S_EXEC=”–write-kubeconfig-mode=644 –node-name=k3s-master” sh -</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>• This installs K3s and sets it as the control plane.</p>
+
+<p>• The –write-kubeconfig-mode=644 ensures the kubeconfig file is readable for other users.</p>
+
+<ol>
+  <li><strong>Retrieve the Node Token:</strong></li>
+</ol>
+
+<p>The node token is required to join worker nodes. Retrieve it using:</p>
+
+<p>sudo cat /var/lib/rancher/k3s/server/node-token</p>
+
+<ol>
+  <li><strong>Note the Master IP Address:</strong></li>
+</ol>
+
+<p>Find the IP address of the master node (e.g., 192.168.1.100).</p>
+
+<p><strong>Step 2: Install K3s on Worker Nodes</strong></p>
+
+<ol>
+  <li><strong>Prepare Each Worker Node:</strong></li>
+</ol>
+
+<p>SSH into each worker node and run:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>curl -sfL https://get.k3s.io</td>
+      <td>K3S_URL=https://<MASTER_IP>:6443 K3S_TOKEN=<NODE_TOKEN> sh -</NODE_TOKEN></MASTER_IP></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Replace:</p>
+
+<p>• <MASTER_IP> with the IP address of the master node.</MASTER_IP></p>
+
+<p>• <NODE_TOKEN> with the token from the master node.</NODE_TOKEN></p>
+
+<ol>
+  <li><strong>Verify Node Registration:</strong></li>
+</ol>
+
+<p>After a few seconds, verify that the worker node is connected to the master node:</p>
+
+<p>kubectl get nodes</p>
+
+<p>You should see all nodes listed (master and workers).</p>
+
+<p><strong>Step 3: Configure Networking</strong></p>
+
+<p>K3s uses Flannel as the default networking backend, which works out of the box. However, you can ensure connectivity by:</p>
+
+<ol>
+  <li><strong>Open Required Ports:</strong></li>
+</ol>
+
+<p>Ensure the following ports are open between nodes:</p>
+
+<p>• TCP: 6443 (API server)</p>
+
+<p>• UDP: 8472 (Flannel VXLAN traffic)</p>
+
+<p>• UDP/TCP: 10250-10255 (kubelet and metrics server)</p>
+
+<ol>
+  <li><strong>Optional: Configure Static IPs:</strong></li>
+</ol>
+
+<p>Assign static IPs or use DHCP reservations on your router.</p>
+
+<p><strong>Step 4: Optional Configurations</strong></p>
+
+<ol>
+  <li><strong>Enable</strong> kubectl <strong>on the Master Node:</strong></li>
+</ol>
+
+<p>Install kubectl (if not already installed):</p>
+
+<p>sudo apt install -y kubectl</p>
+
+<p>Ensure the kubeconfig is accessible:</p>
+
+<p>export KUBECONFIG=/etc/rancher/k3s/k3s.yaml</p>
+
+<ol>
+  <li><strong>Add a Load Balancer (Optional):</strong></li>
+</ol>
+
+<p>Use <strong>Traefik</strong> (installed by default in K3s) or another ingress controller for load balancing.</p>
+
+<ol>
+  <li><strong>Deploy a Test Application:</strong></li>
+</ol>
+
+<p>Verify your cluster with a test deployment:</p>
+
+<p>kubectl create deployment nginx –image=nginx</p>
+
+<p>kubectl expose deployment nginx –type=NodePort –port=80</p>
+
+<p>Access the application at http://<NODE_IP>:<PORT>.</PORT></NODE_IP></p>
+
+<p><strong>Step 5: Monitor and Manage</strong></p>
+
+<ol>
+  <li><strong>Monitor Resources:</strong></li>
+</ol>
+
+<p>Use commands like:</p>
+
+<p>kubectl get pods -A</p>
+
+<p>kubectl top nodes</p>
+
+<ol>
+  <li><strong>Upgrade K3s:</strong></li>
+</ol>
+
+<p>Periodically update K3s with:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>curl -sfL https://get.k3s.io</td>
+      <td>sh -</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Cluster Topology Example</strong></p>
+
+<p><strong>Node Name</strong> <strong>Role</strong> <strong>IP Address</strong></p>
+
+<p>k3s-master Control Plane 192.168.1.100</p>
+
+<p>k3s-node1 Worker 192.168.1.101</p>
+
+<p>k3s-node2 Worker 192.168.1.102</p>
+
+<p>k3s-node3 Worker 192.168.1.103</p>
+
+<hr />
+
+<p>###### Traefik</p>
+
+<p><strong>What is Traefik?</strong></p>
+
+<p><strong>Traefik</strong> is a modern, cloud-native reverse proxy and load balancer designed for ease of deployment and dynamic service discovery. It integrates seamlessly with containerized environments and orchestrators like Kubernetes, Docker, and others.</p>
+
+<p>In the context of Kubernetes:</p>
+
+<p>• <strong>Ingress Controller</strong>: Traefik serves as an ingress controller to route external HTTP(S) traffic into the Kubernetes cluster based on rules.</p>
+
+<p>• <strong>Dynamic Configuration</strong>: Traefik dynamically discovers and configures routes as services are deployed in Kubernetes.</p>
+
+<p>• <strong>TLS Support</strong>: It has built-in Let’s Encrypt support for automatic SSL/TLS certificate management.</p>
+
+<p><strong>Key Features of Traefik</strong></p>
+
+<ol>
+  <li>
+    <p><strong>Dynamic Routing</strong>: Automatically detects and routes traffic to your services.</p>
+  </li>
+  <li>
+    <p><strong>Load Balancing</strong>: Balances traffic across service replicas.</p>
+  </li>
+  <li>
+    <p><strong>TLS Termination</strong>: Handles HTTPS and manages certificates automatically.</p>
+  </li>
+  <li>
+    <p><strong>Middleware</strong>: Includes features like rate limiting, retries, and custom headers.</p>
+  </li>
+  <li>
+    <p><strong>Monitoring</strong>: Provides metrics for Prometheus and visual dashboards.</p>
+  </li>
+</ol>
+
+<p><strong>How to Configure Traefik in Kubernetes</strong></p>
+
+<p>Traefik can be set up in Kubernetes as an <strong>Ingress Controller</strong>. Here’s how to do it:</p>
+
+<p><strong>Step 1: Install Traefik Using Helm</strong></p>
+
+<p>Helm is the easiest way to deploy Traefik. If you don’t have Helm installed, <a href="https://helm.sh/docs/intro/install/">install Helm</a>.</p>
+
+<ol>
+  <li><strong>Add the Traefik Helm Repository</strong>:</li>
+</ol>
+
+<p>helm repo add traefik https://traefik.github.io/charts</p>
+
+<p>helm repo update</p>
+
+<ol>
+  <li><strong>Install Traefik</strong>:</li>
+</ol>
+
+<p>Deploy Traefik in your Kubernetes cluster using:</p>
+
+<p>helm install traefik traefik/traefik –namespace traefik –create-namespace</p>
+
+<p>This will:</p>
+
+<p>• Create a traefik namespace.</p>
+
+<p>• Install Traefik with default settings.</p>
+
+<ol>
+  <li><strong>Verify the Installation</strong>:</li>
+</ol>
+
+<p>Check if Traefik is running:</p>
+
+<p>kubectl get pods -n traefik</p>
+
+<p>You should see the Traefik pod running.</p>
+
+<p><strong>Step 2: Expose Traefik to External Traffic</strong></p>
+
+<p>Traefik can be exposed to the outside world via a <strong>LoadBalancer</strong> or <strong>NodePort</strong> service.</p>
+
+<ol>
+  <li><strong>Default Service</strong>:</li>
+</ol>
+
+<p>The default Helm chart exposes Traefik via a LoadBalancer. You can verify with:</p>
+
+<p>kubectl get svc -n traefik</p>
+
+<p>Example output:</p>
+
+<p>NAME      TYPE           CLUSTER-IP       EXTERNAL-IP    PORT(S)</p>
+
+<p>traefik   LoadBalancer   10.152.183.254   192.168.1.200  80:31568/TCP,443:31668/TCP</p>
+
+<ol>
+  <li><strong>Access the Dashboard (Optional)</strong>:</li>
+</ol>
+
+<p>Traefik includes a dashboard for monitoring:</p>
+
+<p>• Enable it by editing values.yaml or passing custom Helm values during installation:</p>
+
+<p>ports:</p>
+
+<p>  web:</p>
+
+<p>    expose: true</p>
+
+<p>    exposedPort: 80</p>
+
+<p>  websecure:</p>
+
+<p>    expose: true</p>
+
+<p>    exposedPort: 443</p>
+
+<p>additionalArguments:</p>
+
+<p>  - “–api.insecure=true”</p>
+
+<p>• Access the dashboard at http://<LoadBalancer_IP>:8080.</LoadBalancer_IP></p>
+
+<p><strong>Step 3: Configure Ingress Resources</strong></p>
+
+<p>Traefik uses <strong>Ingress</strong> or <strong>IngressRoute</strong> resources to route traffic to services.</p>
+
+<p><strong>Example: Basic Ingress for a Service</strong></p>
+
+<ol>
+  <li>Deploy a test service (e.g., NGINX):</li>
+</ol>
+
+<p>kubectl create deployment nginx –image=nginx</p>
+
+<p>kubectl expose deployment nginx –port=80 –type=ClusterIP</p>
+
+<ol>
+  <li>Create an Ingress resource:</li>
+</ol>
+
+<p>apiVersion: networking.k8s.io/v1</p>
+
+<p>kind: Ingress</p>
+
+<p>metadata:</p>
+
+<p>  name: nginx-ingress</p>
+
+<p>  namespace: default</p>
+
+<p>  annotations:</p>
+
+<p>    traefik.ingress.kubernetes.io/router.entrypoints: web</p>
+
+<p>spec:</p>
+
+<p>  rules:</p>
+
+<p>  - host: nginx.local</p>
+
+<p>    http:</p>
+
+<p>      paths:</p>
+
+<p>      - path: /</p>
+
+<p>        pathType: Prefix</p>
+
+<p>        backend:</p>
+
+<p>          service:</p>
+
+<p>            name: nginx</p>
+
+<p>            port:</p>
+
+<p>              number: 80</p>
+
+<ol>
+  <li>Apply the Ingress resource:</li>
+</ol>
+
+<p>kubectl apply -f nginx-ingress.yaml</p>
+
+<ol>
+  <li>Test it:</li>
+</ol>
+
+<p>• Add nginx.local to your /etc/hosts file, pointing to the Traefik external IP.</p>
+
+<p>• Access it at http://nginx.local.</p>
+
+<p><strong>Step 4: Enable HTTPS (TLS)</strong></p>
+
+<p>Traefik supports automatic TLS using Let’s Encrypt or custom certificates.</p>
+
+<p><strong>Enable Let’s Encrypt in values.yaml:</strong></p>
+
+<p>Add the following configuration:</p>
+
+<p>additionalArguments:</p>
+
+<p>  - “–certificatesresolvers.default.acme.tlschallenge=true”</p>
+
+<p>  - “–certificatesresolvers.default.acme.email=your-email@example.com”</p>
+
+<p>  - “–certificatesresolvers.default.acme.storage=/data/acme.json”</p>
+
+<p>volumes:</p>
+
+<p>  - name: acme-storage</p>
+
+<p>    persistentVolumeClaim:</p>
+
+<p>      claimName: acme-pvc</p>
+
+<p>Traefik will automatically handle SSL certificates for ingress resources that specify:</p>
+
+<p>annotations:</p>
+
+<p>  cert-manager.io/issuer: “letsencrypt”</p>
+
+<p><strong>Step 5: Advanced Configuration</strong></p>
+
+<ol>
+  <li><strong>Middlewares</strong>:</li>
+</ol>
+
+<p>Traefik middlewares allow features like rate limiting or redirects:</p>
+
+<p>apiVersion: traefik.containo.us/v1alpha1</p>
+
+<p>kind: Middleware</p>
+
+<p>metadata:</p>
+
+<p>  name: redirect-to-https</p>
+
+<p>spec:</p>
+
+<p>  redirectScheme:</p>
+
+<p>    scheme: https</p>
+
+<p>    permanent: true</p>
+
+<ol>
+  <li><strong>Custom Routes</strong>:</li>
+</ol>
+
+<p>Use IngressRoute for fine-grained control:</p>
+
+<p>apiVersion: traefik.containo.us/v1alpha1</p>
+
+<p>kind: IngressRoute</p>
+
+<p>metadata:</p>
+
+<p>  name: nginx-ingressroute</p>
+
+<p>spec:</p>
+
+<p>  entryPoints:</p>
+
+<p>    - websecure</p>
+
+<p>  routes:</p>
+
+<p>  - match: Host(<code class="language-plaintext highlighter-rouge">nginx.local</code>)</p>
+
+<p>    kind: Rule</p>
+
+<p>    services:</p>
+
+<p>    - name: nginx</p>
+
+<p>      port: 80</p>
+
+<p><strong>Step 6: Monitor Traefik</strong></p>
+
+<ol>
+  <li>Access metrics for Prometheus or Grafana:</li>
+</ol>
+
+<p>• Enable Prometheus in values.yaml:</p>
+
+<p>metrics:</p>
+
+<p>  prometheus:</p>
+
+<p>    enabled: true</p>
+
+<p>• Use Traefik dashboards in Grafana.</p>
+
+<ol>
+  <li>Logs:</li>
+</ol>
+
+<p>• Check logs for debugging:</p>
+
+<p>kubectl logs -n traefik <traefik-pod-name></traefik-pod-name></p>
+
+<p><strong>Conclusion</strong></p>
+
+<p>With Traefik configured, you now have a robust ingress controller for your Kubernetes cluster. It dynamically discovers services, provides SSL termination, and allows easy configuration through Ingress and IngressRoute resources.</p>

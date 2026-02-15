@@ -1,0 +1,61 @@
+
+<p>To undo a Git merge on your local repository, the approach depends on the current state of the merge:</p>
+
+<hr />
+
+<h3 id="-scenario-1-merge-in-progress-uncommitted">🛑 Scenario 1: Merge in Progress (Uncommitted)</h3>
+
+<p>If you’ve initiated a merge but haven’t committed yet, and want to cancel it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git merge <span class="nt">--abort</span>
+</code></pre></div></div>
+
+<p>This command will stop the merge process and revert your working directory to the state before the merge began.([Git Scripts][1])</p>
+
+<hr />
+
+<h3 id="-scenario-2-merge-committed-locally-not-pushed">✅ Scenario 2: Merge Committed Locally (Not Pushed)</h3>
+
+<p>If you’ve completed the merge and committed it locally but haven’t pushed to the remote repository:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git reset <span class="nt">--hard</span> HEAD~1
+</code></pre></div></div>
+
+<p>This command resets your current branch to the commit before the merge, effectively removing the merge commit and any changes introduced by it. Be cautious: this will discard any uncommitted changes in your working directory.([GeeksforGeeks][2])</p>
+
+<hr />
+
+<h3 id="-scenario-3-merge-committed-and-pushed-to-remote">🔁 Scenario 3: Merge Committed and Pushed to Remote</h3>
+
+<p>If the merge has been committed and pushed to the remote repository, it’s safer to create a new commit that undoes the changes introduced by the merge:([Warp][3])</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git revert <span class="nt">-m</span> 1 &lt;merge_commit_hash&gt;
+</code></pre></div></div>
+
+<ul>
+  <li>Replace <code class="language-plaintext highlighter-rouge">&lt;merge_commit_hash&gt;</code> with the hash of the merge commit you want to revert.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">-m 1</code> option specifies that you want to keep the changes from the first parent of the merge (usually the branch you merged into).([Codedamn][4], [git-tower.com][5])</li>
+</ul>
+
+<p>This approach preserves the history and is recommended when the merge has been shared with others.</p>
+
+<hr />
+
+<h3 id="-finding-the-merge-commit-hash">🧭 Finding the Merge Commit Hash</h3>
+
+<p>To identify the hash of the merge commit you wish to undo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git log <span class="nt">--oneline</span>
+</code></pre></div></div>
+
+<p>Look for the commit message associated with the merge to find its hash.</p>
+
+<hr />
+
+<h3 id="️-important-considerations">⚠️ Important Considerations</h3>
+
+<ul>
+  <li><strong>Avoid using <code class="language-plaintext highlighter-rouge">git reset</code> on public/shared branches</strong> unless you’re certain that no one else is working on them, as it rewrites history and can cause issues for collaborators.</li>
+  <li><strong>Always ensure you have backups or have pushed your changes to a remote repository</strong> before performing operations that alter commit history.</li>
+</ul>
+

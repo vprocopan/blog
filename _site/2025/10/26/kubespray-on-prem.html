@@ -1,0 +1,255 @@
+<h2 id="guide-to-installing-kube-on-prem---pure-technical-version">guide to installing kube on prem - pure technical version</h2>
+<p>https://community-scripts.github.io/ProxmoxVE/scripts?id=ubuntu2404-vm&amp;category=Operating+Systems</p>
+
+<p>create 3 hosts + 1 bastion
+ubuntu1
+ubuntu2
+ubuntu3
+ubuntu-bastion</p>
+
+<p>after installation, checkout: ´https://github.com/community-scripts/ProxmoxVE/discussions/272´</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt install python3-pip
+python3 -m venv kube
+source kube/bin/activate
+git clone https://github.com/kubernetes-sigs/kubespray.git kubespray
+pip install "ansible-core&gt;=2.17.3,&lt;2.18.0"
+ansible-playbook -i inventory/mycluster/inventory.ini cluster.yml -b
+</code></pre></div></div>
+
+<h2 id="guide-to-installing-k8s-doc-with-ai-generated-elaborate-summary">Guide to installing k8s doc with AI generated elaborate summary</h2>
+
+<p>Here’s a guide rewritten as a <strong>complete, well-structured, and informative step-by-step tutorial</strong> for deploying an <strong>on-premises Kubernetes cluster using Kubespray on Proxmox</strong> VMs running <strong>Ubuntu 24.04 LTS</strong>.</p>
+
+<hr />
+
+<h1 id="-on-prem-kubernetes-cluster-setup-on-proxmox-ubuntu-2404--kubespray">🚀 On-Prem Kubernetes Cluster Setup on Proxmox (Ubuntu 24.04 + Kubespray)</h1>
+
+<p>This guide walks you through creating a <strong>3-node Kubernetes cluster</strong> plus <strong>1 bastion host</strong> using <strong>Proxmox VE</strong> and <strong>Kubespray</strong>.<br />
+It assumes you already have <strong>Proxmox VE</strong> installed and accessible.</p>
+
+<hr />
+
+<h2 id="-architecture-overview">🧱 Architecture Overview</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Role</th>
+      <th>Hostname</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Bastion</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">bastion</code></td>
+      <td>Control machine for Ansible and Kubespray</td>
+    </tr>
+    <tr>
+      <td><strong>Control Plane</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">ubuntu1</code></td>
+      <td>Kubernetes master node</td>
+    </tr>
+    <tr>
+      <td><strong>Worker Node 1</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">ubuntu2</code></td>
+      <td>Kubernetes worker node</td>
+    </tr>
+    <tr>
+      <td><strong>Worker Node 2</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">ubuntu3</code></td>
+      <td>Kubernetes worker node</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="️-step-1--create-virtual-machines-on-proxmox">🖥️ Step 1 — Create Virtual Machines on Proxmox</h2>
+
+<p>Use the <strong>Proxmox Community Scripts</strong> to automate VM creation.</p>
+
+<h3 id="-script-source">👉 Script Source:</h3>
+<p><a href="https://community-scripts.github.io/ProxmoxVE/scripts?id=ubuntu2404-vm&amp;category=Operating+Systems">Proxmox Community Scripts - Ubuntu 24.04 VM</a></p>
+
+<p>Each VM should have:</p>
+<ul>
+  <li><strong>2+ CPUs</strong></li>
+  <li><strong>4–8 GB RAM</strong></li>
+  <li><strong>40+ GB disk</strong></li>
+  <li>Network bridge connected to your LAN (for cluster communication)</li>
+</ul>
+
+<h3 id="example-setup">Example setup:</h3>
+<p>Create four VMs:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ubuntu2404-vm ubuntu1
+ubuntu2404-vm ubuntu2
+ubuntu2404-vm ubuntu3
+ubuntu2404-vm bastion
+</code></pre></div></div>
+
+<p>After installation, you can reference this discussion for details:
+👉 <a href="https://github.com/community-scripts/ProxmoxVE/discussions/272">GitHub Discussion #272</a></p>
+
+<hr />
+
+<h2 id="️-step-2--prepare-the-bastion-host">🛠️ Step 2 — Prepare the Bastion Host</h2>
+
+<p>You’ll run <strong>Ansible</strong> and <strong>Kubespray</strong> from the bastion.</p>
+
+<h3 id="ssh-into-bastion">SSH into bastion</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh root@&lt;bastion_ip&gt;
+</code></pre></div></div>
+
+<h3 id="update-packages">Update packages</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt update <span class="o">&amp;&amp;</span> apt upgrade <span class="nt">-y</span>
+</code></pre></div></div>
+
+<h3 id="install-dependencies">Install dependencies</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install</span> <span class="nt">-y</span> python3-pip git curl
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-step-3--set-up-python-virtual-environment">🐍 Step 3 — Set Up Python Virtual Environment</h2>
+
+<p>Create an isolated environment for Kubespray and Ansible.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 <span class="nt">-m</span> venv kube
+<span class="nb">source </span>kube/bin/activate
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-step-4--clone-and-configure-kubespray">📦 Step 4 — Clone and Configure Kubespray</h2>
+
+<p>Clone the Kubespray repository and install dependencies.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/kubernetes-sigs/kubespray.git kubespray
+<span class="nb">cd </span>kubespray
+pip <span class="nb">install</span> <span class="s2">"ansible-core&gt;=2.17.3,&lt;2.18.0"</span>
+pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-step-5--configure-the-inventory">🧭 Step 5 — Configure the Inventory</h2>
+
+<p>Kubespray uses an <strong>inventory file</strong> to define your cluster nodes.</p>
+
+<p>Create a new inventory:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp</span> <span class="nt">-rfp</span> inventory/sample inventory/mycluster
+</code></pre></div></div>
+
+<p>Edit <code class="language-plaintext highlighter-rouge">inventory/mycluster/inventory.ini</code>:</p>
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[all]</span>
+<span class="err">ubuntu1</span> <span class="py">ansible_host</span><span class="p">=</span><span class="s">192.168.1.11 ip=192.168.1.11</span>
+<span class="err">ubuntu2</span> <span class="py">ansible_host</span><span class="p">=</span><span class="s">192.168.1.12 ip=192.168.1.12</span>
+<span class="err">ubuntu3</span> <span class="py">ansible_host</span><span class="p">=</span><span class="s">192.168.1.13 ip=192.168.1.13</span>
+
+<span class="nn">[kube_control_plane]</span>
+<span class="err">ubuntu1</span>
+
+<span class="nn">[etcd]</span>
+<span class="err">ubuntu1</span>
+
+<span class="nn">[kube_node]</span>
+<span class="err">ubuntu2</span>
+<span class="err">ubuntu3</span>
+
+<span class="nn">[k8s_cluster:children]</span>
+<span class="err">kube_control_plane</span>
+<span class="err">kube_node</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>💡 <strong>Tip:</strong> Use <code class="language-plaintext highlighter-rouge">ansible_host</code> for the SSH target (the VM IP from Proxmox) and <code class="language-plaintext highlighter-rouge">ip</code> for the node’s internal IP (used by Kubernetes).</p>
+</blockquote>
+
+<p>Test SSH connectivity:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ansible <span class="nt">-i</span> inventory/mycluster/inventory.ini all <span class="nt">-m</span> ping
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="️-step-6--deploy-the-cluster">⚙️ Step 6 — Deploy the Cluster</h2>
+
+<p>Run the main playbook:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ansible-playbook <span class="nt">-i</span> inventory/mycluster/inventory.ini cluster.yml <span class="nt">-b</span>
+</code></pre></div></div>
+
+<p>This may take 15–30 minutes depending on your resources.</p>
+
+<hr />
+
+<h2 id="-step-7--verify-cluster">✅ Step 7 — Verify Cluster</h2>
+
+<p>Once complete, SSH into the control plane node:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh ubuntu1
+kubectl get nodes
+kubectl get pods <span class="nt">-A</span>
+</code></pre></div></div>
+
+<p>You should see all 3 nodes in the <strong>Ready</strong> state.</p>
+
+<hr />
+
+<h2 id="-optional--access-the-cluster-remotely">🌐 Optional — Access the Cluster Remotely</h2>
+
+<p>You can copy the <code class="language-plaintext highlighter-rouge">admin.conf</code> file to your local machine:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scp ubuntu1:/etc/kubernetes/admin.conf ~/.kube/config
+</code></pre></div></div>
+
+<p>Then:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get nodes
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-troubleshooting">🧩 Troubleshooting</h2>
+
+<ul>
+  <li><strong>SSH key errors:</strong> Ensure your bastion has SSH access to all nodes (<code class="language-plaintext highlighter-rouge">~/.ssh/id_rsa</code>).</li>
+  <li><strong>Python or pip issues:</strong> Re-run in the virtual environment.</li>
+  <li><strong>Connection timeout:</strong> Verify Proxmox VM networking (bridge and IP assignment).</li>
+</ul>
+
+<hr />
+
+<h2 id="-summary">🧾 Summary</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Proxmox Community Script</strong></td>
+      <td>Quickly deploy Ubuntu 24.04 VMs</td>
+    </tr>
+    <tr>
+      <td><strong>Bastion Host</strong></td>
+      <td>Runs Kubespray &amp; Ansible</td>
+    </tr>
+    <tr>
+      <td><strong>Kubespray</strong></td>
+      <td>Automates Kubernetes installation</td>
+    </tr>
+    <tr>
+      <td><strong>Ansible</strong></td>
+      <td>Executes cluster provisioning</td>
+    </tr>
+    <tr>
+      <td><strong>Ubuntu 24.04</strong></td>
+      <td>Lightweight, LTS base OS</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />

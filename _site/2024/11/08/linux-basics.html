@@ -1,0 +1,333 @@
+<h1 id="basic-linux-commands">Basic Linux Commands</h1>
+
+<h2 id="files--navigating">Files &amp; Navigating</h2>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ls</code><br />
+List files and folders in the current directory</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ls -l</code><br />
+Long format listing with permissions, owner, size, and timestamp</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ls -la</code><br />
+Long format listing including hidden (<code class="language-plaintext highlighter-rouge">.</code>) files</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">cd &lt;dir&gt;</code><br />
+Change directory to <code class="language-plaintext highlighter-rouge">&lt;dir&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">cd ..</code><br />
+Move to parent directory</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">cd ./&lt;dir&gt;</code><br />
+Change to <code class="language-plaintext highlighter-rouge">&lt;dir&gt;</code> in the current directory</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">cd ~</code><br />
+Change to your home directory</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">pwd</code><br />
+Print the current working directory</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">mkdir &lt;dir&gt;</code><br />
+Create a new directory named <code class="language-plaintext highlighter-rouge">&lt;dir&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">rm &lt;file&gt;</code><br />
+Remove the file <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">rm -f &lt;file&gt;</code><br />
+Force remove <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code> without prompt</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">rm -rf &lt;dir&gt;</code><br />
+Recursively remove <code class="language-plaintext highlighter-rouge">&lt;dir&gt;</code> and its contents</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">rmdir &lt;dir&gt;</code><br />
+Remove empty directory <code class="language-plaintext highlighter-rouge">&lt;dir&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">rm -rf /</code><br />
+WARNING: Deletes everything on the system root (never run this)</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">cp &lt;source&gt; &lt;destination&gt;</code><br />
+Copy <code class="language-plaintext highlighter-rouge">&lt;source&gt;</code> file to <code class="language-plaintext highlighter-rouge">&lt;destination&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">mv &lt;source&gt; &lt;destination&gt;</code><br />
+Move or rename <code class="language-plaintext highlighter-rouge">&lt;source&gt;</code> to <code class="language-plaintext highlighter-rouge">&lt;destination&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">mv &lt;file&gt; &lt;dir&gt;/&lt;new-name&gt;</code><br />
+Move <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code> into <code class="language-plaintext highlighter-rouge">&lt;dir&gt;</code> with new name <code class="language-plaintext highlighter-rouge">&lt;new-name&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">touch &lt;file&gt;</code><br />
+Create an empty file or update its timestamp</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">cat &lt;file&gt;</code><br />
+Display contents of <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">cat &gt; &lt;file&gt;</code><br />
+Redirect input into <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code>, overwriting it</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">cat &gt;&gt; &lt;file&gt;</code><br />
+Redirect input into <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code>, appending to it</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tail -f &lt;file&gt;</code><br />
+Follow the end of <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code> as it is updated</p>
+  </li>
+</ul>
+
+<h2 id="system-information">System Information</h2>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">date</code><br />
+Display the current date and time</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">uptime</code><br />
+Show how long the system has been running</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">whoami</code><br />
+Print the effective username of the current user</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">w</code><br />
+Show who is logged in and their processes</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">cat /proc/cpuinfo</code><br />
+Display detailed CPU information</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">cat /proc/meminfo</code><br />
+Display memory usage information</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">free -h</code><br />
+Display memory and swap usage in human-readable format</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">du</code><br />
+Estimate file and directory space usage</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">du -sh</code><br />
+Summarize disk usage in human-readable format</p>
+  </li>
+</ul>
+
+<p>• df – show disk usage</p>
+
+<p>• uname -a – show kernel config</p>
+
+<h2 id="networking">Networking</h2>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ping &lt;host&gt;</code><br />
+Send ICMP ECHO_REQUEST to network hosts</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">whois &lt;domain&gt;</code><br />
+Query the WHOIS database for <code class="language-plaintext highlighter-rouge">&lt;domain&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">dig &lt;domain&gt;</code><br />
+DNS lookup for <code class="language-plaintext highlighter-rouge">&lt;domain&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">dig -x &lt;ip&gt;</code><br />
+Reverse DNS lookup for <code class="language-plaintext highlighter-rouge">&lt;ip&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">wget &lt;url&gt;</code><br />
+Download files from the web</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">wget -c &lt;url&gt;</code><br />
+Continue a partially downloaded file</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">wget -r &lt;url&gt;</code><br />
+Recursively download content from <code class="language-plaintext highlighter-rouge">&lt;url&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">curl &lt;url&gt;</code><br />
+Transfer data from <code class="language-plaintext highlighter-rouge">&lt;url&gt;</code> and display it</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">curl -o &lt;file&gt; &lt;url&gt;</code><br />
+Save output from <code class="language-plaintext highlighter-rouge">&lt;url&gt;</code> to <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ssh &lt;user&gt;@&lt;host&gt;</code><br />
+Open SSH connection to <code class="language-plaintext highlighter-rouge">&lt;host&gt;</code> as <code class="language-plaintext highlighter-rouge">&lt;user&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ssh -p &lt;port&gt; &lt;user&gt;@&lt;host&gt;</code><br />
+Specify <code class="language-plaintext highlighter-rouge">&lt;port&gt;</code> for SSH connection</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ssh -D &lt;port&gt; &lt;user&gt;@&lt;host&gt;</code><br />
+Create a SOCKS proxy at local <code class="language-plaintext highlighter-rouge">&lt;port&gt;</code></p>
+  </li>
+</ul>
+
+<h2 id="compressing-archives">Compressing Archives</h2>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tar cf &lt;archive&gt;.tar &lt;files&gt;</code><br />
+Create <code class="language-plaintext highlighter-rouge">&lt;archive&gt;.tar</code> from <code class="language-plaintext highlighter-rouge">&lt;files&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tar xf &lt;archive&gt;.tar</code><br />
+Extract <code class="language-plaintext highlighter-rouge">&lt;archive&gt;.tar</code> in current directory</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">tar tf &lt;archive&gt;.tar</code><br />
+List contents of <code class="language-plaintext highlighter-rouge">&lt;archive&gt;.tar</code></p>
+  </li>
+</ul>
+
+<h3 id="common-tar-options">Common <code class="language-plaintext highlighter-rouge">tar</code> Options</h3>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">c</code><br />
+Create a new archive</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">t</code><br />
+List the archive contents</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">x</code><br />
+Extract files from archive</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">z</code><br />
+Filter archive through gzip</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">f</code><br />
+Use archive file</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">j</code><br />
+Filter archive through bzip2</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">v</code><br />
+Verbosely list files processed</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">w</code><br />
+Prompt before each file</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">k</code><br />
+Keep existing files on extract</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">T</code><br />
+Get list of files from <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code></p>
+  </li>
+</ul>
+
+<h2 id="file-permissions">File Permissions</h2>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">chmod &lt;mode&gt; &lt;file&gt;</code><br />
+Change file permissions to <code class="language-plaintext highlighter-rouge">&lt;mode&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">4</code><br />
+Read permission</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">2</code><br />
+Write permission</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">1</code><br />
+Execute permission</p>
+  </li>
+  <li>
+    <p>Permissions order: owner/group/others</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">chmod 777 &lt;file&gt;</code><br />
+Full permissions for all users</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">chmod 755 &lt;file&gt;</code><br />
+Owner can rwx, group/others can rx</p>
+  </li>
+</ul>
+
+<h2 id="process-management">Process Management</h2>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ps</code><br />
+List current shell processes</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">ps aux</code><br />
+Show all processes in detailed format</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">kill &lt;pid&gt;</code><br />
+Send TERM signal to <code class="language-plaintext highlighter-rouge">&lt;pid&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">killall &lt;process&gt;</code><br />
+Kill all processes named <code class="language-plaintext highlighter-rouge">&lt;process&gt;</code></p>
+  </li>
+</ul>
+
+<h2 id="other-useful-commands">Other Useful Commands</h2>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">grep &lt;pattern&gt; &lt;file&gt;</code><br />
+Search for <code class="language-plaintext highlighter-rouge">&lt;pattern&gt;</code> in <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">grep -r &lt;pattern&gt; &lt;dir&gt;</code><br />
+Recursively search <code class="language-plaintext highlighter-rouge">&lt;pattern&gt;</code> in <code class="language-plaintext highlighter-rouge">&lt;dir&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">locate &lt;file&gt;</code><br />
+Find all occurrences of <code class="language-plaintext highlighter-rouge">&lt;file&gt;</code> in database</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">whereis &lt;app&gt;</code><br />
+Locate binary, source, and manual page for <code class="language-plaintext highlighter-rouge">&lt;app&gt;</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">man &lt;command&gt;</code><br />
+Display the manual page for <code class="language-plaintext highlighter-rouge">&lt;command&gt;</code></p>
+  </li>
+</ul>
+

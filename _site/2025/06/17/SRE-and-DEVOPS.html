@@ -1,0 +1,170 @@
+<p>A clear breakdown of how a <strong>DevOps team</strong> and an <strong>SRE team</strong> can coexist in the same organization, with distinct responsibilities but <strong>collaborative workflows</strong>.</p>
+
+<hr />
+
+<h2 id="-devops-team-vs-sre-team--two-team-model">🧑‍🤝‍🧑 DevOps Team vs SRE Team – Two-Team Model</h2>
+
+<h3 id="-1-devops-team--enabling-delivery">📦 <strong>1. DevOps Team – “Enabling Delivery”</strong></h3>
+
+<p><strong>Goal:</strong> Streamline software delivery, automation, and developer productivity</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Responsibility</th>
+      <th>Examples</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CI/CD pipeline maintenance</td>
+      <td>GitHub Actions, Jenkins, ArgoCD, Helm</td>
+    </tr>
+    <tr>
+      <td>Infrastructure as Code</td>
+      <td>Terraform, Pulumi, Kubernetes manifests</td>
+    </tr>
+    <tr>
+      <td>Secrets &amp; configuration</td>
+      <td>ExternalSecrets, Vault, SealedSecrets</td>
+    </tr>
+    <tr>
+      <td>Developer tooling</td>
+      <td>Internal CLI tools, boilerplate generators</td>
+    </tr>
+    <tr>
+      <td>Artifact management</td>
+      <td>Docker registries, Helm repos</td>
+    </tr>
+    <tr>
+      <td>GitOps enablement</td>
+      <td>ArgoCD, Flux for declarative delivery</td>
+    </tr>
+    <tr>
+      <td>Platform engineering</td>
+      <td>Creating reusable templates and platforms</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p><strong>Mindset:</strong> Make it easy, fast, and safe for devs to ship code</p>
+</blockquote>
+
+<hr />
+
+<h3 id="-2-sre-team--ensuring-reliability">🚨 <strong>2. SRE Team – “Ensuring Reliability”</strong></h3>
+
+<p><strong>Goal:</strong> Keep services reliable, available, and observable at scale</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Responsibility</th>
+      <th>Examples</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SLIs/SLOs/Error Budgets</td>
+      <td>Defining latency/availability thresholds</td>
+    </tr>
+    <tr>
+      <td>Monitoring &amp; alerting</td>
+      <td>Prometheus, Grafana, Alertmanager</td>
+    </tr>
+    <tr>
+      <td>Incident response/on-call</td>
+      <td>PagerDuty, incident runbooks, retrospectives</td>
+    </tr>
+    <tr>
+      <td>Chaos engineering</td>
+      <td>Simulate failures to test resilience</td>
+    </tr>
+    <tr>
+      <td>Performance tuning</td>
+      <td>Autoscaling, load testing, caching</td>
+    </tr>
+    <tr>
+      <td>Capacity planning</td>
+      <td>Forecasting usage trends and scaling needs</td>
+    </tr>
+    <tr>
+      <td>Reliability tooling</td>
+      <td>Tools that reduce toil (auto-healing, alerting bots)</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p><strong>Mindset:</strong> Measure everything and eliminate toil through code</p>
+</blockquote>
+
+<hr />
+
+<h2 id="-example-workflow-how-they-work-together">🔁 Example Workflow: How They Work Together</h2>
+
+<h3 id="deploying-a-new-service">Deploying a New Service</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Step</th>
+      <th>DevOps Team</th>
+      <th>SRE Team</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>🏗 Scaffold</td>
+      <td>Provide service template with GitOps/CD</td>
+      <td>Review SLO baseline for service</td>
+    </tr>
+    <tr>
+      <td>🚢 Deploy</td>
+      <td>Build pipeline and Helm chart</td>
+      <td>Ensure service is observable</td>
+    </tr>
+    <tr>
+      <td>🔍 Monitor</td>
+      <td>Expose logs &amp; metrics via Fluentd, Grafana</td>
+      <td>Define alerts for error rate, latency</td>
+    </tr>
+    <tr>
+      <td>🛠 Operate</td>
+      <td>Offer tools to update config or secrets</td>
+      <td>Take on-call for incidents</td>
+    </tr>
+    <tr>
+      <td>🔁 Improve</td>
+      <td>Collect deployment feedback</td>
+      <td>Run incident retrospectives</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="-org-chart-simplified">🧱 Org Chart (Simplified)</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Engineering Org
+├── Application Dev Teams
+│   ├── Builds features
+│   └── Owns service code
+├── DevOps / Platform Team
+│   ├── CI/CD &amp; GitOps
+│   ├── IaC &amp; Secrets
+│   └── Developer enablement
+└── SRE Team
+    ├── Uptime / on-call
+    ├── SLIs/SLOs/Error Budgets
+    └── Incident tooling
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-key-principle-you-build-it-you-run-it">🤝 Key Principle: <strong>You Build It, You Run It</strong></h2>
+
+<p>SRE doesn’t take over ownership — it <strong>enables developers</strong> to own production safely by building reliability into the system.</p>
+
+<hr />

@@ -1,0 +1,200 @@
+<p>Perfect — here is the <strong>clean, guaranteed-working</strong>, official <strong>Ubuntu 24.04 Cloud-Image + cloud-init (NoCloud) + Virt-Manager</strong> setup.</p>
+
+<p>This is the method Ubuntu itself recommends for KVM/QEMU.
+Zero installer. Zero GRUB. Zero autoinstall pain.</p>
+
+<p>This will <strong>work 100%</strong>.</p>
+
+<hr />
+
+<h1 id="-overview-what-you-will-get">✅ OVERVIEW (what you will get)</h1>
+
+<p>A VM that:</p>
+
+<ul>
+  <li>Boots instantly (no installer)</li>
+  <li>Uses cloud-init like AWS / Azure / Proxmox</li>
+  <li>Has your user <code class="language-plaintext highlighter-rouge">vprocopan</code></li>
+  <li>Has your SSH key installed</li>
+  <li>Has qemu-guest-agent enabled</li>
+  <li>Is reproducible, template-ready, cloud-ready</li>
+</ul>
+
+<p>And created entirely using <strong>cloud image + NoCloud seed</strong>.</p>
+
+<hr />
+
+<h1 id="-step-1--download-ubuntu-2404-cloud-image">🚀 STEP 1 — Download Ubuntu 24.04 cloud image</h1>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> ~/cloudvm
+<span class="nb">cd</span> ~/cloudvm
+
+wget https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+</code></pre></div></div>
+
+<p>This file is the <strong>actual OS image</strong>, no installer.</p>
+
+<hr />
+
+<h1 id="-step-2--resize-the-vm-image">🚀 STEP 2 — Resize the VM image</h1>
+
+<p>Let’s make it 50GB total disk:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qemu-img resize noble-server-cloudimg-amd64.img 50G
+</code></pre></div></div>
+
+<hr />
+
+<h1 id="-step-3--create-cloud-init-config">🚀 STEP 3 — Create cloud-init config</h1>
+
+<h2 id="31-user-data">3.1 <code class="language-plaintext highlighter-rouge">user-data</code></h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano user-data
+</code></pre></div></div>
+
+<p>Paste:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#cloud-config</span>
+<span class="na">users</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">user</span>
+    <span class="na">groups</span><span class="pi">:</span> <span class="pi">[</span> <span class="nv">sudo</span> <span class="pi">]</span>
+    <span class="na">shell</span><span class="pi">:</span> <span class="s">/bin/bash</span>
+    <span class="na">sudo</span><span class="pi">:</span> <span class="s">ALL=(ALL) NOPASSWD:ALL</span>
+    <span class="na">ssh_authorized_keys</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">ssh-ed25519 XXX</span>
+
+<span class="na">package_upgrade</span><span class="pi">:</span> <span class="kc">true</span>
+
+<span class="na">packages</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">qemu-guest-agent</span>
+
+<span class="na">runcmd</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">systemctl enable qemu-guest-agent</span>
+  <span class="pi">-</span> <span class="s">systemctl start qemu-guest-agent</span>
+</code></pre></div></div>
+
+<h2 id="32-meta-data">3.2 <code class="language-plaintext highlighter-rouge">meta-data</code></h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano meta-data
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>instance-id: cloudimg-001
+local-hostname: ubuntu-cloud
+</code></pre></div></div>
+
+<hr />
+
+<h1 id="-step-4--create-the-nocloud-seed-image">🚀 STEP 4 — Create the NoCloud seed image</h1>
+
+<p>This is the <strong>magic piece</strong> from the official cloud-init QEMU tutorial.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>genisoimage <span class="nt">-output</span> seed.iso <span class="nt">-volid</span> cidata <span class="nt">-joliet</span> <span class="nt">-rock</span> user-data meta-data
+</code></pre></div></div>
+
+<p><strong>IMPORTANT:</strong>
+The volume label must be <strong>cidata</strong> (lowercase).
+This is how NoCloud datasource detects it.</p>
+
+<hr />
+
+<h1 id="-step-5--create-the-vm-in-virt-manager">🚀 STEP 5 — Create the VM in Virt-Manager</h1>
+
+<h3 id="-add-vm-manually">🔹 Add VM manually:</h3>
+
+<p><strong>1. Create new VM → “Import existing disk image”</strong>
+Select:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>noble-server-cloudimg-amd64.img
+</code></pre></div></div>
+
+<p>OS type:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Ubuntu 24.04 (or Generic Ubuntu)
+</code></pre></div></div>
+
+<p><strong>2. Choose Q35 + UEFI (recommended)</strong>
+Under Overview →</p>
+
+<ul>
+  <li>Chipset: <strong>Q35</strong></li>
+  <li>Firmware: <strong>UEFI</strong> (OVMF)</li>
+</ul>
+
+<p><strong>3. Add the cloud-init seed disk</strong>
+Add Hardware →
+Storage →
+“Select or create custom storage” → choose:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>seed.iso
+</code></pre></div></div>
+
+<p>IMPORTANT:
+Set:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Device type: Disk
+Bus: SCSI or VirtIO
+</code></pre></div></div>
+
+<p>(Cloud-init sees disks, not CDROMs.)</p>
+
+<p><strong>4. Ensure the boot order boots only from the main disk</strong>
+NOT from seed.iso.</p>
+
+<hr />
+
+<h1 id="-step-6--boot-the-vm">🚀 STEP 6 — Boot the VM</h1>
+
+<p>During first boot:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cloud-init will detect NoCloud (seed.iso)
+apply user-data
+create user vprocopan
+add SSH key
+enable qemu-guest-agent
+resize disk to full 50GB
+</code></pre></div></div>
+
+<p>You can watch progress:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo tail -f /var/log/cloud-init-output.log
+</code></pre></div></div>
+
+<p>Check status:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cloud-init status --wait
+cloud-init status --long
+</code></pre></div></div>
+
+<hr />
+
+<h1 id="-step-7--ssh-into-the-vm">🚀 STEP 7 — SSH into the VM</h1>
+
+<p>Get the VM IP from virt-manager or inside VM:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip a
+</code></pre></div></div>
+
+<p>Then SSH:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh vprocopan@&lt;VM-IP&gt;
+</code></pre></div></div>
+
+<p>Your key works instantly.</p>
+
+<hr />
+
+<h1 id="-done">🎉 DONE</h1>
+
+<p>You now have:</p>
+
+<ul>
+  <li>A <strong>real cloud-image VM</strong></li>
+  <li>No installer needed</li>
+  <li>Full cloud-init support</li>
+  <li>Perfect for DevOps work</li>
+  <li>Runs instantly</li>
+  <li>Repeatable</li>
+  <li>Zero GUI interaction</li>
+</ul>
+
+<hr />

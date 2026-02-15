@@ -1,0 +1,4 @@
+<h2 id="all-loadbalancer-service-external-ips-all-namespaces">All LoadBalancer Service external IPs, all namespaces:</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">kubectl get svc -A -o jsonpath='{range .items[?(@.spec.type=="LoadBalancer")]}{.metadata.namespace}{"\t"}{.metadata.name}{"\t"}{range .status.loadBalancer.ingress[*]}{.ip}{.hostname}{" "}{end}{"\n"}{end}'</span>
+</code></pre></div></div>

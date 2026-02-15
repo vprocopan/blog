@@ -1,0 +1,4 @@
+<h2 id="to-add-a-node-use">to add a node use:</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ansible-playbook <span class="nt">-i</span> /inventory/inventory.ini <span class="nt">--private-key</span> /root/.ssh/id_ed25519 scale.yml <span class="nt">--limit</span><span class="o">=</span><span class="s2">"node6,kube_control_plane"</span> <span class="nt">--become</span> <span class="nt">-vvv</span>
+</code></pre></div></div>

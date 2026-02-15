@@ -1,0 +1,129 @@
+<p>To set up a Debian-based NAS that works well with macOS clients. I’ll break it down into steps:</p>
+
+<hr />
+
+<h2 id="1-base-setup-on-debian">1. Base Setup on Debian</h2>
+
+<ol>
+  <li>Install Debian (stable recommended).</li>
+  <li>
+    <p>Update the system:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update <span class="o">&amp;&amp;</span> <span class="nb">sudo </span>apt upgrade <span class="nt">-y</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Install useful tools:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>vim htop curl wget net-tools avahi-daemon <span class="nt">-y</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="2-storage-preparation">2. Storage Preparation</h2>
+
+<ol>
+  <li>
+    <p>Identify your disks:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsblk
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Partition &amp; format (e.g., Btrfs or ext4):</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mkfs.btrfs /dev/sdX
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Mount permanently by editing <code class="language-plaintext highlighter-rouge">/etc/fstab</code>.</p>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="3-file-sharing-options-for-macos">3. File Sharing Options for macOS</h2>
+
+<p>macOS supports <strong>SMB</strong> and <strong>AFP</strong>. AFP is deprecated, so <strong>SMB (via Samba)</strong> is the best option.</p>
+
+<h3 id="install-samba">Install Samba</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>samba <span class="nt">-y</span>
+</code></pre></div></div>
+
+<h3 id="configure">Configure</h3>
+
+<p>Edit <code class="language-plaintext highlighter-rouge">/etc/samba/smb.conf</code> and add a share:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[macshare]</span>
+   <span class="py">path</span> <span class="p">=</span> <span class="s">/srv/nas/macshare</span>
+   <span class="py">browseable</span> <span class="p">=</span> <span class="s">yes</span>
+   <span class="err">read</span> <span class="py">only</span> <span class="p">=</span> <span class="s">no</span>
+   <span class="err">guest</span> <span class="py">ok</span> <span class="p">=</span> <span class="s">no</span>
+   <span class="err">create</span> <span class="py">mask</span> <span class="p">=</span> <span class="s">0664</span>
+   <span class="err">directory</span> <span class="py">mask</span> <span class="p">=</span> <span class="s">0775</span>
+</code></pre></div></div>
+
+<p>Create directory &amp; set permissions:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo mkdir</span> <span class="nt">-p</span> /srv/nas/macshare
+<span class="nb">sudo chown</span> <span class="nt">-R</span> <span class="nv">$USER</span>:<span class="nv">$USER</span> /srv/nas/macshare
+</code></pre></div></div>
+
+<p>Add Samba user:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>smbpasswd <span class="nt">-a</span> yourusername
+</code></pre></div></div>
+
+<p>Restart Samba:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart smbd
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="4-bonjour-avahi-for-easy-macos-discovery">4. Bonjour (Avahi) for Easy macOS Discovery</h2>
+
+<p>Install Avahi:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>avahi-daemon avahi-discover <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>This allows your NAS to appear automatically in Finder under “Network”.</p>
+
+<hr />
+
+<h2 id="5-optional-time-machine-support">5. (Optional) Time Machine Support</h2>
+
+<p>macOS can back up to SMB shares if flagged as a Time Machine volume.</p>
+
+<p>Add this inside your Samba config:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[TimeMachine]</span>
+   <span class="py">path</span> <span class="p">=</span> <span class="s">/srv/nas/timemachine</span>
+   <span class="err">valid</span> <span class="py">users</span> <span class="p">=</span> <span class="s">yourusername</span>
+   <span class="err">read</span> <span class="py">only</span> <span class="p">=</span> <span class="s">no</span>
+   <span class="err">vfs</span> <span class="py">objects</span> <span class="p">=</span> <span class="s">fruit streams_xattr</span>
+   <span class="err">fruit:time</span> <span class="py">machine</span> <span class="p">=</span> <span class="s">yes</span>
+   <span class="err">fruit:</span><span class="py">metadata</span> <span class="p">=</span> <span class="s">stream</span>
+</code></pre></div></div>
+
+<p>Then:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo mkdir</span> <span class="nt">-p</span> /srv/nas/timemachine
+<span class="nb">sudo chown</span> <span class="nt">-R</span> yourusername:yourusername /srv/nas/timemachine
+<span class="nb">sudo </span>systemctl restart smbd
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="6-access-from-macos">6. Access from macOS</h2>
+
+<ul>
+  <li>In Finder: <code class="language-plaintext highlighter-rouge">⌘ + K</code> → <code class="language-plaintext highlighter-rouge">smb://&lt;your-nas-ip&gt;/macshare</code></li>
+  <li>Or find it under <strong>Network</strong> if Avahi works.</li>
+</ul>
+
+<hr />

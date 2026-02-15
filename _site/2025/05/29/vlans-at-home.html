@@ -1,0 +1,178 @@
+<p>Here’s a visualization of your home network VLAN setup using the TP-Link TL-SG116E switch:</p>
+
+<ul>
+  <li><strong>Router</strong> connects to Port 1 (Untagged VLAN 10)</li>
+  <li><strong>PC and NAS</strong> are in <strong>VLAN 10 (Trusted)</strong></li>
+  <li><strong>Smart TV and IP Camera</strong> are in <strong>VLAN 20 (IoT)</strong></li>
+  <li><strong>Guest Laptop</strong> is in <strong>VLAN 30 (Guest)</strong></li>
+</ul>
+
+<p>Each VLAN is isolated from the others by the switch. Let me know if you’d like a config table export or wiring diagram with port numbers!</p>
+
+<p><img src="/assets/images/vlan.png" alt="vlans" /></p>
+
+<p>The <strong>TP-Link TL-SG116E</strong> is a <strong>smart unmanaged switch</strong> that supports <strong>802.1Q VLAN tagging</strong>, <strong>port-based VLANs</strong>, and <strong>PVID settings</strong>, making it suitable for basic VLAN setups even without a VLAN-aware router.</p>
+
+<hr />
+
+<h2 id="-your-setup-plan-with-tl-sg116e-and-a-non-vlan-router">🧩 Your Setup Plan (with TL-SG116E and a non-VLAN router)</h2>
+
+<h3 id="-goal-isolate-devices-using-vlans">🎯 Goal: Isolate devices using VLANs</h3>
+
+<ul>
+  <li>VLAN 10: Main trusted network (with internet)</li>
+  <li>VLAN 20: IoT devices (no access to VLAN 10, optionally no internet)</li>
+  <li>VLAN 30: Guests (isolated from all others)</li>
+</ul>
+
+<hr />
+
+<h2 id="️-step-by-step-vlan-setup-on-tl-sg116e">🛠️ Step-by-Step: VLAN Setup on TL-SG116E</h2>
+
+<h3 id="1-login-to-the-switch">1. <strong>Login to the Switch</strong></h3>
+
+<ol>
+  <li>Connect a PC directly to the switch.</li>
+  <li>Use TP-Link’s <strong>Easy Smart Configuration Utility</strong> or browser (IP is usually <code class="language-plaintext highlighter-rouge">192.168.0.1</code> or <code class="language-plaintext highlighter-rouge">192.168.0.100</code>).</li>
+  <li>Login (default: admin / admin).</li>
+</ol>
+
+<hr />
+
+<h3 id="2-create-vlans">2. <strong>Create VLANs</strong></h3>
+
+<p>Go to <strong>VLAN &gt; 802.1Q VLAN &gt; VLAN Config</strong>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>VLAN ID</th>
+      <th>VLAN Name</th>
+      <th>Member Ports</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>10</td>
+      <td>Trusted</td>
+      <td>1, 2, 3</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>IoT</td>
+      <td>1, 4, 5</td>
+    </tr>
+    <tr>
+      <td>30</td>
+      <td>Guest</td>
+      <td>1, 6</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>Port 1 is the <strong>uplink to your router</strong> — it must belong to all VLANs if you want them to reach the router (limited functionality unless router supports VLANs).</p>
+</blockquote>
+
+<hr />
+
+<h3 id="3-set-port-vlan-modes-taguntag">3. <strong>Set Port VLAN Modes (Tag/Untag)</strong></h3>
+
+<p>Go to <strong>VLAN &gt; 802.1Q VLAN &gt; VLAN Membership</strong>:</p>
+
+<ul>
+  <li><strong>Port 1</strong> (Router): Set as <strong>Untagged on VLAN 10 only</strong> (assuming router can’t handle tags).</li>
+  <li><strong>Ports 2–3</strong> (Trusted): Untagged on VLAN 10.</li>
+  <li><strong>Ports 4–5</strong> (IoT): Untagged on VLAN 20.</li>
+  <li><strong>Port 6</strong> (Guest): Untagged on VLAN 30.</li>
+</ul>
+
+<p>You can only assign <strong>1 untagged VLAN per port</strong> — this becomes the <strong>PVID</strong>.</p>
+
+<hr />
+
+<h3 id="4-set-pvids-port-vlan-ids">4. <strong>Set PVIDs (Port VLAN IDs)</strong></h3>
+
+<p>Go to <strong>VLAN &gt; 802.1Q PVID Setting</strong>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Port</th>
+      <th>PVID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>2–3</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>4–5</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>30</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This ensures each port sends/receives untagged packets <strong>associated with the correct VLAN</strong>.</p>
+
+<hr />
+
+<h2 id="-vlan-isolation-behavior">🔐 VLAN Isolation Behavior</h2>
+
+<ul>
+  <li><strong>Devices on VLAN 10 (Ports 2–3)</strong> can access the internet (via Port 1 → router).</li>
+  <li><strong>Devices on VLAN 20 (Ports 4–5)</strong> are isolated at Layer 2 — they cannot talk to VLAN 10.</li>
+  <li><strong>Devices on VLAN 30 (Port 6)</strong> are isolated too.</li>
+</ul>
+
+<p>⚠️ <strong>All VLANs share the same subnet</strong> since the router doesn’t support VLAN interfaces — so while the switch isolates traffic, the router may bridge it back if you connect all VLANs to it.</p>
+
+<hr />
+
+<h2 id="-tips--workarounds">🧠 Tips &amp; Workarounds</h2>
+
+<h3 id="-to-block-internet-for-iot-or-guest-devices">✅ To Block Internet for IoT or Guest Devices:</h3>
+
+<ul>
+  <li>Do <strong>not connect Port 1 (router)</strong> to VLAN 20 or VLAN 30.</li>
+  <li>Or use static IPs and don’t configure a gateway on those devices.</li>
+</ul>
+
+<h3 id="-to-provide-internet-to-multiple-vlans-partially">✅ To Provide Internet to Multiple VLANs (Partially):</h3>
+
+<p>You’ll need a <strong>VLAN-aware router</strong>, or:</p>
+
+<ul>
+  <li>Use <strong>multiple routers</strong>, one per VLAN, plugged into different VLAN access ports.</li>
+  <li>Or <strong>set static IPs and use the same gateway</strong> (router won’t segment them, but switch will isolate traffic locally).</li>
+</ul>
+
+<hr />
+
+<h2 id="-wi-fi-vlan">🛜 Wi-Fi VLAN?</h2>
+
+<p>Only possible if your <strong>Access Point supports VLAN-tagged SSIDs</strong> (e.g., TP-Link Omada, Ubiquiti). Otherwise, Wi-Fi clients will be in the router’s flat network.</p>
+
+<hr />
+
+<h2 id="-final-thoughts">🚦 Final Thoughts</h2>
+
+<p>Your TL-SG116E <strong>can enforce VLAN separation at Layer 2</strong>, even if your router is VLAN-blind. That’s great for:</p>
+
+<ul>
+  <li>Reducing attack surface (IoT → no access to PC/NAS)</li>
+  <li>Guest isolation</li>
+  <li>Testing VLAN behavior</li>
+</ul>
+
+<p>If you want full routing/firewall control between VLANs, a <strong>VLAN-aware router</strong> (like OpenWrt or pfSense) is the natural next step.</p>
+

@@ -1,0 +1,225 @@
+<h1 id="1-update-and-upgrade-system-packages">1. Update and Upgrade System Packages</h1>
+
+<p><strong>Purpose:</strong> Ensure the system is up-to-date with the latest security patches and software updates.</p>
+
+<p><strong>Script:</strong></p>
+
+<p>#!/bin/bash</p>
+
+<p>echo “Updating system packages…”<br />
+sudo apt update &amp;&amp; sudo apt upgrade -y</p>
+
+<p>echo “System updated successfully!”</p>
+
+<p><strong>Explanation:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">apt update</code> refreshes the list of available packages.</li>
+  <li><code class="language-plaintext highlighter-rouge">apt upgrade -y</code> installs the updated versions of the packages automatically.</li>
+  <li><code class="language-plaintext highlighter-rouge">sudo</code> is used to run commands with administrative privileges.</li>
+</ul>
+
+<h1 id="2-monitor-disk-space">2. Monitor Disk Space</h1>
+
+<p><strong>Purpose:</strong> Check disk usage and alert if usage exceeds a specified threshold.</p>
+
+<p><strong>Script:</strong></p>
+
+<p>#!/bin/bash<br />
+THRESHOLD=80<br />
+echo “Checking disk usage…”<br />
+USAGE=$(df / | tail -1 | awk ‘{print $5}’ | sed ‘s/%//’)<br />
+if [ “$USAGE” -gt “$THRESHOLD” ]; then<br />
+ echo “Disk usage is above $THRESHOLD%! Current usage: $USAGE%”<br />
+else<br />
+ echo “Disk usage is below $THRESHOLD%. Current usage: $USAGE%”<br />
+fi</p>
+
+<p><strong>Explanation:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">df /</code> checks disk space for the root partition.</li>
+  <li><code class="language-plaintext highlighter-rouge">awk</code> and <code class="language-plaintext highlighter-rouge">sed</code> extract and clean the usage percentage.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">if</code> statement compares the usage to the threshold and prints a warning if exceeded.</li>
+</ul>
+
+<h1 id="3-automate-file-backups">3. Automate File Backups</h1>
+
+<p><strong>Purpose:</strong> Back up a directory to a specific location.</p>
+
+<p><strong>Script:</strong></p>
+
+<p>#!/bin/bash<br />
+SOURCE=”/path/to/source”<br />
+DEST=”/path/to/backup”<br />
+DATE=$(date +%Y-%m-%d) 
+echo “Backing up files from $SOURCE to $DEST/$DATE…”<br />
+mkdir -p “$DEST/$DATE”<br />
+cp -r “$SOURCE”/* “$DEST/$DATE”<br />
+echo “Backup completed!”</p>
+
+<p><strong>Explanation:</strong></p>
+
+<ul>
+  <li>Replace <code class="language-plaintext highlighter-rouge">/path/to/source</code> and <code class="language-plaintext highlighter-rouge">/path/to/backup</code> with the actual paths.</li>
+  <li><code class="language-plaintext highlighter-rouge">date +%Y-%m-%d</code> generates a timestamp for the backup folder.</li>
+  <li><code class="language-plaintext highlighter-rouge">mkdir -p</code> creates the backup directory if it doesn’t exist.</li>
+  <li><code class="language-plaintext highlighter-rouge">cp -r</code> recursively copies all files.</li>
+</ul>
+
+<h1 id="4-deploy-a-simple-web-server">4. Deploy a Simple Web Server</h1>
+
+<p><strong>Purpose:</strong> Quickly set up a web server with Nginx.</p>
+
+<p><strong>Script:</strong></p>
+
+<p>#!/bin/bash<br />
+echo “Installing Nginx…”<br />
+sudo apt update<br />
+sudo apt install -y nginx<br />
+echo “Starting Nginx service…”<br />
+sudo systemctl start nginx<br />
+sudo systemctl enable nginx<br />
+echo “Nginx web server is up and running!”</p>
+
+<p><strong>Explanation:</strong></p>
+
+<ul>
+  <li>Installs Nginx, a popular web server.</li>
+  <li><code class="language-plaintext highlighter-rouge">systemctl</code> starts and enables Nginx to run on boot.</li>
+</ul>
+
+<h1 id="5-add-and-manage-users">5. Add and Manage Users</h1>
+
+<p><strong>Purpose:</strong> Automate user creation with pre-defined privileges.</p>
+
+<p><strong>Script:</strong></p>
+
+<p>#!/bin/bash<br />
+USERNAME=”newuser”<br />
+PASSWORD=”password123”<br />
+GROUP=”sudo”<br />
+echo “Creating user $USERNAME…” 
+sudo useradd -m -s /bin/bash “$USERNAME”<br />
+echo “$USERNAME:$PASSWORD” | sudo chpasswd<br />
+echo “Adding $USERNAME to $GROUP group…”<br />
+sudo usermod -aG “$GROUP” “$USERNAME”<br />
+echo “User $USERNAME created and added to $GROUP!”</p>
+
+<p><strong>Explanation:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">useradd</code> creates a new user.</li>
+  <li><code class="language-plaintext highlighter-rouge">chpasswd</code> sets the user password.</li>
+  <li><code class="language-plaintext highlighter-rouge">usermod -aG</code> adds the user to a specified group (e.g., <code class="language-plaintext highlighter-rouge">sudo</code>).</li>
+</ul>
+
+<h1 id="6-check-server-uptime">6. Check Server Uptime</h1>
+
+<p><strong>Purpose:</strong> Display how long the server has been running.</p>
+
+<p><strong>Script:</strong></p>
+
+<p>#!/bin/bash<br />
+echo “Server uptime:”<br />
+uptime</p>
+
+<p><strong>Explanation:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">uptime</code> shows the server’s uptime, load averages, and users logged in.</li>
+</ul>
+
+<h1 id="7-check-active-processes">7. Check Active Processes</h1>
+
+<p><strong>Purpose:</strong> Identify resource-intensive processes.</p>
+
+<p><strong>Script:</strong></p>
+
+<p>#!/bin/bash<br />
+echo “Top 5 processes by CPU usage:”<br />
+ps -eo pid,ppid,cmd,%mem,%cpu –sort=-%cpu | head -6</p>
+
+<p><strong>Explanation:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ps</code> lists processes with details like PID, CPU, and memory usage.</li>
+  <li><code class="language-plaintext highlighter-rouge">--sort=-%cpu</code> sorts processes by CPU usage in descending order.</li>
+  <li><code class="language-plaintext highlighter-rouge">head -6</code> limits the output to the top 5 processes (plus the header).</li>
+</ul>
+
+<h1 id="8-automate-ssh-key-generation">8. Automate SSH Key Generation</h1>
+
+<p><strong>Purpose:</strong> Generate SSH keys for secure remote access.</p>
+
+<p><strong>Script:</strong></p>
+
+<p>#!/bin/bash<br />
+KEY_NAME=”id_rsa”<br />
+echo “Generating SSH key…”<br />
+ssh-keygen -t rsa -b 4096 -f “$HOME/.ssh/$KEY_NAME” -N “”<br />
+echo “SSH key generated at $HOME/.ssh/$KEY_NAME”</p>
+
+<p><strong>Explanation:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ssh-keygen</code> creates an RSA key pair with 4096 bits.</li>
+  <li><code class="language-plaintext highlighter-rouge">-f</code> specifies the file name and location.</li>
+  <li><code class="language-plaintext highlighter-rouge">-N ""</code> sets an empty passphrase.</li>
+</ul>
+
+<h1 id="9-restart-a-service">9. Restart a Service</h1>
+
+<p><strong>Purpose:</strong> Restart a service if it’s not running.</p>
+
+<p><strong>Script:</strong></p>
+
+<p>#!/bin/bash<br />
+SERVICE=”nginx”<br />
+if ! systemctl is-active –quiet “$SERVICE”; then 
+echo “$SERVICE is not running. Restarting…”<br />
+ sudo systemctl restart “$SERVICE” 
+else 
+echo “$SERVICE is running.”<br />
+fi</p>
+
+<p><strong>Explanation:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">systemctl is-active</code> checks if the service is running.</li>
+  <li>If not, the script restarts the service.</li>
+</ul>
+
+<h1 id="10-schedule-a-cron-job">10. Schedule a Cron Job</h1>
+
+<p><img src="https://miro.medium.com/v2/resize:fit:700/1*mKSu6tniDWAiqGjB3adGjw.png" alt="" /></p>
+
+<p><strong>Purpose:</strong> Automate task scheduling by adding a cron job.</p>
+
+<p><strong>Script:</strong></p>
+
+<p>#!/bin/bash<br />
+JOB=”0 2 * * * /path/to/script.sh”<br />
+CRON_FILE=”/tmp/mycron”<br />
+echo “Adding cron job…”<br />
+(crontab -l 2&gt;/dev/null; echo “$JOB”) | crontab -<br />
+echo “Cron job added successfully!”</p>
+
+<p><strong>Explanation:</strong></p>
+
+<ul>
+  <li>Replace <code class="language-plaintext highlighter-rouge">/path/to/script.sh</code> with the script you want to schedule.</li>
+  <li><code class="language-plaintext highlighter-rouge">(crontab -l; echo "$JOB")</code> appends the new job to existing ones.</li>
+  <li><code class="language-plaintext highlighter-rouge">crontab -</code> loads the updated list of cron jobs.</li>
+</ul>
+
+<h1 id="tips-for-running-the-scripts">Tips for Running the Scripts:</h1>
+
+<ol>
+  <li><strong>Save the Script:</strong> Save the script as a <code class="language-plaintext highlighter-rouge">.sh</code> file (e.g., <code class="language-plaintext highlighter-rouge">script.sh</code>).</li>
+  <li><strong>Make it Executable:</strong> Run <code class="language-plaintext highlighter-rouge">chmod +x script.sh</code> to make it executable.</li>
+  <li><strong>Run the Script:</strong> Execute it using <code class="language-plaintext highlighter-rouge">./script.sh</code>.</li>
+  <li><strong>Debugging:</strong> Use <code class="language-plaintext highlighter-rouge">bash -x script.sh</code> to debug if errors occur.</li>
+</ol>
+
+<p>These scripts provide a solid foundation for automating repetitive tasks in DevOps workflows.</p>

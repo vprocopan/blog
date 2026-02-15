@@ -1,0 +1,301 @@
+<p>What if you have to pull and push at the same time?</p>
+
+<p>The safest approach is to do <strong>below:</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch
+git merge origin/your-branch
+</code></pre></div></div>
+
+<p>This is a <strong>manual equivalent of <code class="language-plaintext highlighter-rouge">git pull</code></strong>, and it gives you more control over the process.</p>
+
+<hr />
+
+<h2 id="-1-git-fetch">🔹 1. <code class="language-plaintext highlighter-rouge">git fetch</code></h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch
+</code></pre></div></div>
+
+<ul>
+  <li>This <strong>downloads</strong> the latest changes from the remote repository (e.g. GitHub or Bitbucket).</li>
+  <li>It updates the special remote-tracking branches like <code class="language-plaintext highlighter-rouge">origin/main</code>, <code class="language-plaintext highlighter-rouge">origin/dev</code>, etc.</li>
+  <li><strong>Important:</strong> It does <strong>not change your working directory</strong> or local branches.</li>
+</ul>
+
+<p>So after this:</p>
+
+<ul>
+  <li>You have the latest info from the remote.</li>
+  <li>But your local branch is still exactly as it was.</li>
+</ul>
+
+<hr />
+
+<h2 id="-2-git-merge-originyour-branch">🔹 2. <code class="language-plaintext highlighter-rouge">git merge origin/your-branch</code></h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git merge origin/your-branch
+</code></pre></div></div>
+
+<ul>
+  <li>This <strong>merges the remote-tracking branch</strong> (e.g. <code class="language-plaintext highlighter-rouge">origin/main</code>) into your current local branch (e.g. <code class="language-plaintext highlighter-rouge">main</code>).</li>
+  <li>It applies the commits from the remote branch that are not in your local branch.</li>
+  <li>If there are changes on both sides, this may create a <strong>merge commit</strong>.</li>
+</ul>
+
+<hr />
+
+<h2 id="-full-example">🔁 Full Example:</h2>
+
+<p>Let’s say:</p>
+
+<ul>
+  <li>
+    <p>Remote <code class="language-plaintext highlighter-rouge">main</code> has:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A -- B -- C (origin/main)
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Your local <code class="language-plaintext highlighter-rouge">main</code> has:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A -- D -- E (your commits)
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="you-run">You run:</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch
+git merge origin/main
+</code></pre></div></div>
+
+<p>Git will do:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      B -- C (origin/main)
+     /
+A -- D -- E -- M (merge commit)
+</code></pre></div></div>
+
+<p>Where <strong>M</strong> is a new commit combining both histories.</p>
+
+<hr />
+
+<h2 id="-why-use-this-over-git-pull">✅ Why use this over <code class="language-plaintext highlighter-rouge">git pull</code>?</h2>
+
+<ul>
+  <li>You get a <strong>safe preview</strong>: <code class="language-plaintext highlighter-rouge">git fetch</code> shows you what changed without touching your files.</li>
+  <li>You can inspect with <code class="language-plaintext highlighter-rouge">git log origin/main</code> or <code class="language-plaintext highlighter-rouge">git diff HEAD origin/main</code> before merging.</li>
+  <li>You avoid surprises — useful in automation or scripting.</li>
+</ul>
+
+<hr />
+
+<h2 id="another-approach-is-to-do-below">Another approach is to do <strong>below:</strong></h2>
+
+<p>If you want to avoid merge commits and keep history linear:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch
+git rebase origin/your-branch
+</code></pre></div></div>
+
+<p>Let’s walk through a <strong>visual example</strong> of <code class="language-plaintext highlighter-rouge">git rebase origin/main</code> with <strong>real commands</strong> step-by-step.</p>
+
+<hr />
+
+<h3 id="-scenario">🧪 Scenario:</h3>
+
+<p>You and your teammate are both working on the <code class="language-plaintext highlighter-rouge">main</code> branch.</p>
+
+<ul>
+  <li>Your teammate made a commit and pushed it.</li>
+  <li>Meanwhile, you made a local commit.</li>
+  <li>Now, the branches look like this:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Remote (origin/main):     A --- B --- C
+Your local (main):        A --- B --- D
+</code></pre></div></div>
+
+<p>So your local <code class="language-plaintext highlighter-rouge">main</code> has diverged from <code class="language-plaintext highlighter-rouge">origin/main</code>.</p>
+
+<hr />
+
+<h3 id="-goal">🎯 Goal:</h3>
+
+<p>Bring your local commit (<code class="language-plaintext highlighter-rouge">D</code>) <strong>on top of</strong> <code class="language-plaintext highlighter-rouge">origin/main</code> (<code class="language-plaintext highlighter-rouge">A-B-C</code>) — using <code class="language-plaintext highlighter-rouge">git rebase</code>.</p>
+
+<hr />
+
+<h3 id="-step-by-step-commands">💻 Step-by-step commands:</h3>
+
+<h4 id="-1-fetch-the-latest-from-remote">🔁 1. Fetch the latest from remote</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git fetch origin
+</code></pre></div></div>
+
+<p>Now Git knows about <code class="language-plaintext highlighter-rouge">origin/main</code> and its state (including commit <code class="language-plaintext highlighter-rouge">C</code>).</p>
+
+<hr />
+
+<h4 id="-2-check-the-difference-optional-but-recommended">🔎 2. Check the difference (optional but recommended)</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git log <span class="nt">--oneline</span> <span class="nt">--graph</span> <span class="nt">--all</span>
+</code></pre></div></div>
+
+<p>You’ll see something like:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* d34db33 (HEAD -&gt; main) D: Your local commit
+| * c0ffee (origin/main) C: Teammate's commit
+|/
+* bbbbbbb B: shared base
+* aaaaaaa A: initial commit
+</code></pre></div></div>
+
+<hr />
+
+<h4 id="-3-rebase-your-work-onto-the-latest-originmain">🔁 3. Rebase your work onto the latest origin/main</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git rebase origin/main
+</code></pre></div></div>
+
+<p>This means:</p>
+
+<blockquote>
+  <p>“Take my commit D, and apply it on top of origin/main (which ends at C).”</p>
+</blockquote>
+
+<p>If no conflicts, you’ll get:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A --- B --- C --- D′
+</code></pre></div></div>
+
+<p>Now your local branch is linear and up-to-date.</p>
+
+<hr />
+
+<h4 id="-4-push-your-changes">🚀 4. Push your changes</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git push <span class="nt">--force-with-lease</span>
+</code></pre></div></div>
+
+<p>Since you rewrote history (D → D′), a normal <code class="language-plaintext highlighter-rouge">git push</code> would be rejected.
+<code class="language-plaintext highlighter-rouge">--force-with-lease</code> safely updates the branch only if the remote hasn’t changed since your fetch.</p>
+
+<hr />
+
+<h3 id="-summary">🧠 Summary:</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Step</th>
+      <th>Command</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><code class="language-plaintext highlighter-rouge">git fetch origin</code></td>
+      <td>Download latest changes</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><code class="language-plaintext highlighter-rouge">git log --oneline --graph --all</code></td>
+      <td>Visualize history</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><code class="language-plaintext highlighter-rouge">git rebase origin/main</code></td>
+      <td>Replay your commits on top of remote</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><code class="language-plaintext highlighter-rouge">git push --force-with-lease</code></td>
+      <td>Push updated history</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<p><img src="/assets/images/pull-push.png" alt="pull-push-sametime" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hint:   git config pull.rebase false  # merge
+hint:   git config pull.rebase true   # rebase
+hint:   git config pull.ff only       # fast-forward only
+</code></pre></div></div>
+
+<p>These git config hints refer to how Git should handle git pull, which combines git fetch (downloading new commits) and git merge (or rebase, depending on settings).</p>
+
+<p>⸻</p>
+
+<p>📌 The Problem:</p>
+
+<p>When you run git pull, Git needs to know how to integrate the remote changes into your current branch — especially if you’ve made local commits that are not on the remote.</p>
+
+<p>⸻</p>
+
+<p>🔧 Options Explained:</p>
+
+<ol>
+  <li>git config pull.rebase false
+ •	Default behavior: merge.
+ •	Git will do:</li>
+</ol>
+
+<p>git fetch
+git merge origin/your-branch</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>•	This creates a merge commit if your local branch and remote branch have diverged.
+•	✅ Easy, keeps full history.
+•	❌ History may get messy due to merge commits.
+</code></pre></div></div>
+
+<p>⸻</p>
+
+<ol>
+  <li>git config pull.rebase true
+ •	Git will do:</li>
+</ol>
+
+<p>git fetch
+git rebase origin/your-branch</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>•	Your local commits are rebased on top of the latest remote commits.
+•	✅ Cleaner, linear history (looks like you wrote all changes after pulling).
+•	❌ Can be confusing if you’re not used to rebasing; requires careful conflict resolution.
+</code></pre></div></div>
+
+<p>⸻</p>
+
+<ol>
+  <li>git config pull.ff only
+ •	Git will do:</li>
+</ol>
+
+<p>git fetch
+git merge –ff-only origin/your-branch</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>•	This means: only fast-forward the branch if possible (i.e., if there are no local commits).
+•	✅ Prevents merge commits and history rewriting.
+•	❌ Fails if your local branch has diverged — you must resolve manually.
+</code></pre></div></div>
+
+<p>⸻</p>
+
+<p>🔧 Set Globally or Per-Repo</p>
+
+<p>Set globally for all repos:</p>
+
+<p>git config –global pull.rebase true  # or false or ff only</p>
+
+<p>Set per-repo:</p>
+
+<p>git config pull.rebase true</p>
+
+<p>⸻</p>
+
+<p>✅ Which One Should You Use?
+	•	Use rebase if you like linear, tidy history (typical in modern teams).
+	•	Use merge if you value recording all merge points.
+	•	Use ff only if you’re strict and always want a clean fast-forward only (common in protected branches).</p>
